@@ -117,28 +117,15 @@ npm run ios          # Ejecutar en iOS
 - [ ] Recomendaciones personalizadas
 - [ ] Predicción de hábitos
 
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea tu rama de feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
 ## 👥 Equipo
 
-- **Fabian Munoz** - Lead Developer
-- **[Tu equipo]** - Contributors
+- **Fabián Munoz** - Lead Developer
+- **Vicente Chacón** - Lead Developer
 
-## 📞 Contacto
-
-- Email: fabi.munozv@duocuc.cl
-- LinkedIn: [tu-linkedin]
-- Proyecto: [GitHub Repository]
 
 ---
 
