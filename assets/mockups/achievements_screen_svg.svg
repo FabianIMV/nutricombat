@@ -1,0 +1,94 @@
+<svg width="320" height="640" viewBox="0 0 320 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Phone Container -->
+  <rect width="320" height="640" rx="30" fill="#000000"/>
+  
+  <!-- Screen -->
+  <rect x="8" y="8" width="304" height="624" rx="22" fill="white"/>
+  
+  <defs>
+    <linearGradient id="achievementGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#FFA000"/>
+    </linearGradient>
+    <linearGradient id="levelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9C27B0"/>
+      <stop offset="100%" style="stop-color:#673AB7"/>
+    </linearGradient>
+    <linearGradient id="buttonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B"/>
+      <stop offset="100%" style="stop-color:#4ECDC4"/>
+    </linearGradient>
+    <filter id="goldShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#FFD700" flood-opacity="0.3"/>
+    </filter>
+    <filter id="cardShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Status Bar -->
+  <rect x="8" y="8" width="304" height="44" rx="22" fill="white"/>
+  <text x="28" y="35" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="#000">9:43</text>
+  <text x="268" y="35" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="#000">🔋 100%</text>
+  
+  <!-- Header -->
+  <rect x="8" y="52" width="304" height="100" fill="url(#achievementGradient)"/>
+  <text x="40" y="85" font-family="system-ui" font-size="20" fill="white">‹</text>
+  <text x="160" y="85" font-family="SF Pro Display, system-ui" font-size="24" font-weight="bold" fill="white" text-anchor="middle">🏆 Logros</text>
+  <text x="160" y="105" font-family="SF Pro Display, system-ui" font-size="14" fill="white" text-anchor="middle" opacity="0.9">Tu progreso en NutriCombat</text>
+  <text x="160" y="125" font-family="SF Pro Display, system-ui" font-size="14" fill="white" text-anchor="middle" opacity="0.9">12 de 25 logros desbloqueados</text>
+  
+  <!-- Level Progress Section -->
+  <rect x="28" y="172" width="264" height="80" rx="16" fill="url(#levelGradient)" filter="url(#cardShadow)"/>
+  <text x="50" y="200" font-family="system-ui" font-size="32" fill="white">🎖️</text>
+  <text x="90" y="195" font-family="SF Pro Display, system-ui" font-size="20" font-weight="bold" fill="white">Nivel 12</text>
+  <text x="90" y="210" font-family="SF Pro Display, system-ui" font-size="12" fill="white" opacity="0.8">GUERRERO NUTRICIONAL</text>
+  <text x="90" y="225" font-family="SF Pro Display, system-ui" font-size="12" fill="white" opacity="0.8">2,340 XP / 3,000 XP</text>
+  <!-- Progress bar -->
+  <rect x="90" y="230" width="180" height="6" rx="3" fill="rgba(255,255,255,0.3)"/>
+  <rect x="90" y="230" width="140" height="6" rx="3" fill="white"/>
+  
+  <!-- Recent Achievement -->
+  <text x="28" y="280" font-family="SF Pro Display, system-ui" font-size="18" font-weight="600" fill="#333">Logro Reciente</text>
+  
+  <rect x="28" y="290" width="264" height="70" rx="16" fill="white" stroke="#FFD700" stroke-width="2" filter="url(#goldShadow)"/>
+  <text x="50" y="315" font-family="system-ui" font-size="24">🔥</text>
+  <text x="80" y="315" font-family="SF Pro Display, system-ui" font-size="16" font-weight="bold" fill="#333">¡Racha de 7 días!</text>
+  <text x="80" y="330" font-family="SF Pro Display, system-ui" font-size="12" fill="#666">Registraste comidas por 7 días seguidos</text>
+  <text x="80" y="345" font-family="SF Pro Display, system-ui" font-size="12" font-weight="600" fill="#FFD700">+500 XP</text>
+  <text x="270" y="325" font-family="SF Pro Display, system-ui" font-size="12" fill="#666">Hace 2h</text>
+  
+  <!-- Achievements Grid -->
+  <text x="28" y="385" font-family="SF Pro Display, system-ui" font-size="18" font-weight="600" fill="#333">Todos los Logros</text>
+  
+  <!-- Achievement Item 1 - Unlocked -->
+  <rect x="28" y="395" width="264" height="60" rx="12" fill="white" filter="url(#cardShadow)"/>
+  <circle cx="50" cy="425" r="16" fill="#4CAF50"/>
+  <text x="50" y="430" font-family="system-ui" font-size="14" fill="white" text-anchor="middle">✓</text>
+  <text x="76" y="418" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="#333">Primera Comida 🍽️</text>
+  <text x="76" y="432" font-family="SF Pro Display, system-ui" font-size="12" fill="#666">Registra tu primera comida</text>
+  <text x="76" y="445" font-family="SF Pro Display, system-ui" font-size="11" font-weight="600" fill="#4CAF50">COMPLETADO</text>
+  <text x="270" y="425" font-family="SF Pro Display, system-ui" font-size="12" font-weight="600" fill="#FFD700">+100 XP</text>
+  
+  <!-- Achievement Item 2 - Unlocked -->
+  <rect x="28" y="465" width="264" height="60" rx="12" fill="white" filter="url(#cardShadow)"/>
+  <circle cx="50" cy="495" r="16" fill="#FF9800"/>
+  <text x="50" y="500" font-family="system-ui" font-size="14" fill="white" text-anchor="middle">📊</text>
+  <text x="76" y="488" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="#333">Explorador de Macros 📈</text>
+  <text x="76" y="502" font-family="SF Pro Display, system-ui" font-size="12" fill="#666">Revisa tu dashboard 10 veces</text>
+  <text x="76" y="515" font-family="SF Pro Display, system-ui" font-size="11" font-weight="600" fill="#FF9800">COMPLETADO</text>
+  <text x="270" y="495" font-family="SF Pro Display, system-ui" font-size="12" font-weight="600" fill="#FFD700">+250 XP</text>
+  
+  <!-- Achievement Item 3 - Locked -->
+  <rect x="28" y="535" width="264" height="60" rx="12" fill="#F5F5F5" filter="url(#cardShadow)"/>
+  <circle cx="50" cy="565" r="16" fill="#E0E0E0"/>
+  <text x="50" y="570" font-family="system-ui" font-size="14" fill="#999" text-anchor="middle">🔒</text>
+  <text x="76" y="558" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="#999">Maestro Scanner 📸</text>
+  <text x="76" y="572" font-family="SF Pro Display, system-ui" font-size="12" fill="#999">Escanea 50 alimentos diferentes</text>
+  <text x="76" y="585" font-family="SF Pro Display, system-ui" font-size="11" font-weight="600" fill="#999">12/50 PROGRESO</text>
+  <text x="270" y="565" font-family="SF Pro Display, system-ui" font-size="12" font-weight="600" fill="#999">+500 XP</text>
+  
+  <!-- Progress indicator -->
+  <rect x="76" y="587" width="100" height="4" rx="2" fill="#E0E0E0"/>
+  <rect x="76" y="587" width="24" height="4" rx="2" fill="#4ECDC4"/>
+</svg>

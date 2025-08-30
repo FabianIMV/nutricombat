@@ -1,0 +1,72 @@
+<svg width="320" height="640" viewBox="0 0 320 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Phone Container -->
+  <rect width="320" height="640" rx="30" fill="#000000"/>
+  
+  <!-- Screen -->
+  <rect x="8" y="8" width="304" height="624" rx="22" fill="white"/>
+  
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="buttonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B"/>
+      <stop offset="100%" style="stop-color:#4ECDC4"/>
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect x="8" y="8" width="304" height="624" rx="22" fill="url(#bgGradient)"/>
+  
+  <!-- Status Bar -->
+  <text x="28" y="35" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="white">9:41</text>
+  <text x="268" y="35" font-family="SF Pro Display, system-ui" font-size="14" font-weight="600" fill="white">🔋 100%</text>
+  
+  <!-- Logo Section -->
+  <text x="160" y="150" font-family="system-ui" font-size="60" text-anchor="middle">🥊</text>
+  <text x="160" y="190" font-family="SF Pro Display, system-ui" font-size="32" font-weight="bold" fill="white" text-anchor="middle">NutriCombat</text>
+  <text x="160" y="215" font-family="SF Pro Display, system-ui" font-size="16" fill="white" text-anchor="middle" opacity="0.8">Tu batalla nutricional personal</text>
+  
+  <!-- Login Form Container -->
+  <rect x="28" y="260" width="264" height="280" rx="20" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Welcome Text -->
+  <text x="160" y="290" font-family="SF Pro Display, system-ui" font-size="24" font-weight="bold" fill="#333" text-anchor="middle">¡Bienvenido!</text>
+  <text x="160" y="310" font-family="SF Pro Display, system-ui" font-size="14" fill="#666" text-anchor="middle">Inicia sesión para continuar</text>
+  
+  <!-- Email Input -->
+  <rect x="48" y="335" width="224" height="50" rx="12" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="58" y="355" font-family="SF Pro Display, system-ui" font-size="12" fill="#666">EMAIL</text>
+  <text x="58" y="375" font-family="SF Pro Display, system-ui" font-size="16" fill="#333">usuario@ejemplo.com</text>
+  
+  <!-- Password Input -->
+  <rect x="48" y="395" width="224" height="50" rx="12" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="58" y="415" font-family="SF Pro Display, system-ui" font-size="12" fill="#666">CONTRASEÑA</text>
+  <text x="58" y="435" font-family="SF Pro Display, system-ui" font-size="16" fill="#333">••••••••</text>
+  <text x="252" y="435" font-family="system-ui" font-size="16" fill="#666" text-anchor="middle">👁</text>
+  
+  <!-- Login Button -->
+  <rect x="48" y="465" width="224" height="50" rx="12" fill="url(#buttonGradient)"/>
+  <text x="160" y="495" font-family="SF Pro Display, system-ui" font-size="16" font-weight="600" fill="white" text-anchor="middle">Iniciar Sesión</text>
+  
+  <!-- Forgot Password -->
+  <text x="160" y="570" font-family="SF Pro Display, system-ui" font-size="14" fill="white" text-anchor="middle" opacity="0.8">¿Olvidaste tu contraseña?</text>
+  
+  <!-- Social Login -->
+  <text x="160" y="600" font-family="SF Pro Display, system-ui" font-size="14" fill="white" text-anchor="middle" opacity="0.6">- o continúa con -</text>
+  
+  <!-- Social Buttons -->
+  <circle cx="130" cy="620" r="20" fill="white" opacity="0.9"/>
+  <text x="130" y="627" font-family="system-ui" font-size="16" text-anchor="middle">G</text>
+  
+  <circle cx="160" cy="620" r="20" fill="white" opacity="0.9"/>
+  <text x="160" y="627" font-family="system-ui" font-size="16" text-anchor="middle">f</text>
+  
+  <circle cx="190" cy="620" r="20" fill="white" opacity="0.9"/>
+  <text x="190" y="627" font-family="system-ui" font-size="16" text-anchor="middle">🍎</text>
+</svg>
