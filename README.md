@@ -1,8 +1,36 @@
 # 🥊 NutriCombat
 
+![React Native](https://img.shields.io/badge/React%20Native-0.72+-blue.svg)
+![Node.js](https://img.shields.io/badge/Node.js-18.0+-green.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![Contributors](https://img.shields.io/badge/contributors-2-orange.svg)
+
 **Combate tus objetivos nutricionales con inteligencia y diseño**
 
 NutriCombat es una aplicación móvil innovadora que gamifica la experiencia nutricional, convirtiendo el seguimiento de tu dieta en un desafío motivador. Con análisis inteligente de alimentos y recomendaciones personalizadas, ayuda a los usuarios a "combatir" sus malos hábitos alimenticios y alcanzar sus metas de salud.
+
+## 📱 Mockups de la Aplicación
+
+<div align="center">
+  <img src="assets/mockups/dashboard.png" width="200" alt="Dashboard Principal"/>
+  <img src="assets/mockups/scanner.png" width="200" alt="Food Scanner"/>
+  <img src="assets/mockups/analytics.png" width="200" alt="Analytics"/>
+  <img src="assets/mockups/achievements.png" width="200" alt="Logros"/>
+</div>
+
+> **Nota**: Los mockups están disponibles como archivos SVG en la carpeta `/assets/mockups/` y pueden importarse directamente a Figma para prototipado.
+
+### 🎨 Pantallas Principales
+
+| Pantalla | Descripción | Funcionalidades Clave |
+|----------|-------------|------------------------|
+| 🏠 **Dashboard** | Vista principal con métricas diarias | Stats, macronutrientes, comidas recientes |
+| 🔐 **Login** | Autenticación segura | Social login, recuperación de contraseña |
+| 📸 **Scanner** | Reconocimiento IA de alimentos | Escaneo, búsqueda manual, historial |
+| 🏆 **Logros** | Sistema de gamificación | Niveles, XP, achievements desbloqueables |
+| 📊 **Analytics** | Análisis y progreso semanal | Gráficos, insights IA, recomendaciones |
 
 ## ✨ Características Principales
 
@@ -32,13 +60,23 @@ npm run dev
 
 ## 📱 Tecnologías
 
-- **Frontend**: React Native / Expo
-- **Backend**: Node.js + Express
-- **Base de Datos**: MongoDB
-- **IA/ML**: TensorFlow.js para reconocimiento de imágenes
-- **Autenticación**: Firebase Auth
-- **Almacenamiento**: Firebase Storage
-- **APIs**: Edamam Food Database, Nutritionix
+### Stack Principal
+| Categoría | Tecnología | Versión | Descripción |
+|-----------|------------|---------|-------------|
+| **Frontend** | React Native + Expo | 0.72+ | Desarrollo móvil multiplataforma |
+| **Backend** | Node.js + Express | 18.0+ | API REST y servicios |
+| **Base de Datos** | MongoDB | 6.0+ | Base de datos NoSQL |
+| **IA/ML** | TensorFlow.js | 4.0+ | Reconocimiento de imágenes |
+| **Autenticación** | Firebase Auth | 9.0+ | Gestión de usuarios |
+| **Storage** | Firebase Storage | 9.0+ | Almacenamiento de archivos |
+| **APIs** | Edamam, Nutritionix | - | Datos nutricionales |
+
+### Herramientas de Desarrollo
+- **Testing**: Jest, Detox
+- **Linting**: ESLint, Prettier
+- **CI/CD**: GitHub Actions
+- **Design**: Figma, SVG mockups
+- **Analytics**: Firebase Analytics
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -117,16 +155,23 @@ npm run ios          # Ejecutar en iOS
 - [ ] Recomendaciones personalizadas
 - [ ] Predicción de hábitos
 
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea tu rama de feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
 ## 👥 Equipo
 
-- **Fabián Munoz** - Lead Developer
+- **Fabian Munoz** - Lead Developer
 - **Vicente Chacón** - Lead Developer
-
-
+- 
 ---
 
 **NutriCombat** - *Transforma tu nutrición en una aventura* 🚀
