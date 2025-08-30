@@ -14,10 +14,11 @@ NutriCombat es una aplicación móvil innovadora que gamifica la experiencia nut
 ## 📱 Mockups de la Aplicación
 
 <div align="center">
-  <img src="assets/mockups/dashboard.png" width="200" alt="Dashboard Principal"/>
-  <img src="assets/mockups/scanner.png" width="200" alt="Food Scanner"/>
-  <img src="assets/mockups/analytics.png" width="200" alt="Analytics"/>
-  <img src="assets/mockups/achievements.png" width="200" alt="Logros"/>
+  <img src="assets/mockups/login_screen_svg.svg" width="200" alt="Login"/>
+  <img src="assets/mockups/nutricombat_svg.svg" width="200" alt="Home"/>
+  <img src="assets/mockups/scanner_screen_svg.svg" width="200" alt="Food Scanner"/>
+  <img src="assets/mockups/analytics_screen_svg.svg" width="200" alt="Analytics"/>
+  <img src="assets/mockups/achievements_screen_svg.svg" width="200" alt="Logros"/>
 </div>
 
 > **Nota**: Los mockups están disponibles como archivos SVG en la carpeta `/assets/mockups/` y pueden importarse directamente a Figma para prototipado.
