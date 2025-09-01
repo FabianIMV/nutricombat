@@ -13,7 +13,7 @@ NutriCombat es una aplicación móvil innovadora que gamifica la experiencia nut
 ## 📱 Mockups de la Aplicación
 
 <div align="center">
-<img width="827" height="291" alt="Captura de pantalla 2025-09-01 a la(s) 6 55 36 p m" src="https://github.com/user-attachments/assets/22823e56-bc3c-4880-b121-7d323f63bf9a" />
+<img width="827" height="291" alt="Captura de pantalla 2025-09-01 a la(s) 6 55 36 p m" src="https://github.com/user-attachments/assets/22823e56-bc3c-4880-b121-7d323f63bf9a" />
 
 </div>
 
@@ -32,11 +32,11 @@ NutriCombat es una aplicación móvil innovadora que gamifica la experiencia nut
 ## ✨ Características Principales
 
 - **🎮 Gamificación Nutricional**: Sistema de puntos, niveles y logros
-- **📸 Reconocimiento de Alimentos**: IA para identificar comidas por foto
+- **📸 Reconocimiento de Alimentos**: Google Gemini Vision para identificar comidas por foto
 - **📊 Dashboard Inteligente**: Análisis detallado de macros y micros
 - **🎯 Objetivos Personalizados**: Planes adaptados a tu estilo de vida
 - **👥 Comunidad**: Desafíos grupales y rankings
-- **💡 Recomendaciones IA**: Sugerencias basadas en tus hábitos
+- **💡 Recomendaciones IA**: Sugerencias personalizadas basadas en análisis con Gemini
 
 ## 🚀 Instalación
 
@@ -61,9 +61,9 @@ npm run dev
 | Categoría | Tecnología | Versión | Descripción |
 |-----------|------------|---------|-------------|
 | **Frontend** | React Native + Expo | 0.72+ | Desarrollo móvil multiplataforma |
-| **Backend** | Node.js + Express | 18.0+ | API REST y servicios |
-| **Base de Datos** | MongoDB | 6.0+ | Base de datos NoSQL |
-| **IA/ML** | TensorFlow.js | 4.0+ | Reconocimiento de imágenes |
+| **Backend** | NestJS | 10.0+ | Framework Node.js enterprise-grade |
+| **Base de Datos** | Supabase | - | Base de datos PostgreSQL como servicio |
+| **IA/ML** | Google Gemini Vision API | - | Reconocimiento de alimentos por imagen |
 | **Autenticación** | Firebase Auth | 9.0+ | Gestión de usuarios |
 | **Storage** | Firebase Storage | 9.0+ | Almacenamiento de archivos |
 | **APIs** | Edamam, Nutritionix | - | Datos nutricionales |
@@ -71,9 +71,10 @@ npm run dev
 ### Herramientas de Desarrollo
 - **Testing**: Jest, Detox
 - **Linting**: ESLint, Prettier
-- **CI/CD**: GitHub Actions
+- **CI/CD**: ArgoCD, K3S
 - **Design**: Figma, SVG mockups
-- **Analytics**: Firebase Analytics
+- **Monitoring**: Prometheus
+- **Cloud**: EC2 con K3S cluster
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -148,17 +149,10 @@ npm run ios          # Ejecutar en iOS
 - [ ] Desafíos grupales
 
 ### v2.0 - AI Enhancement
-- [ ] Reconocimiento de alimentos por IA
-- [ ] Recomendaciones personalizadas
-- [ ] Predicción de hábitos
-
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea tu rama de feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+- [ ] Reconocimiento avanzado con Gemini Vision
+- [ ] Análisis nutricional inteligente con IA
+- [ ] Recomendaciones personalizadas con ML
+- [ ] Predicción de hábitos y tendencias
 
 ## 📄 Licencia
 
