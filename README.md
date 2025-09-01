@@ -1,5 +1,4 @@
 # 🥊 NutriCombat
-
 ![React Native](https://img.shields.io/badge/React%20Native-0.72+-blue.svg)
 ![Node.js](https://img.shields.io/badge/Node.js-18.0+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -14,11 +13,8 @@ NutriCombat es una aplicación móvil innovadora que gamifica la experiencia nut
 ## 📱 Mockups de la Aplicación
 
 <div align="center">
-  <img src="assets/mockups/login_screen_svg.svg" width="200" alt="Login"/>
-  <img src="assets/mockups/nutricombat_svg.svg" width="200" alt="Home"/>
-  <img src="assets/mockups/scanner_screen_svg.svg" width="200" alt="Food Scanner"/>
-  <img src="assets/mockups/analytics_screen_svg.svg" width="200" alt="Analytics"/>
-  <img src="assets/mockups/achievements_screen_svg.svg" width="200" alt="Logros"/>
+<img width="827" height="291" alt="Captura de pantalla 2025-09-01 a la(s) 6 55 36 p m" src="https://github.com/user-attachments/assets/22823e56-bc3c-4880-b121-7d323f63bf9a" />
+
 </div>
 
 > **Nota**: Los mockups están disponibles como archivos SVG en la carpeta `/assets/mockups/` y pueden importarse directamente a Figma para prototipado.
