@@ -137,9 +137,9 @@ npm run ios          # Ejecutar en iOS
 ## 🚀 Roadmap
 
 ### v1.0 - MVP (Actual)
-- [x] Registro de usuarios
-- [x] Seguimiento básico de alimentos
-- [x] Dashboard principal
+- [ ] Registro de usuarios
+- [ ] Seguimiento básico de alimentos
+- [ ] Dashboard principal
 - [ ] Sistema de gamificación
 
 ### v1.1 - Social Features
@@ -168,7 +168,6 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 - **Fabian Munoz** - Lead Developer
 - **Vicente Chacón** - Lead Developer
-- 
 ---
 
-**NutriCombat** - *Transforma tu nutrición en una aventura* 🚀
+**NutriCombat** - *Transforma tu nutrición en una aventura inteligente* 🚀
