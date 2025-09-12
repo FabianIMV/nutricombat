@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "NutriCombat",
+    "slug": "nutricombat-v0",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "webpack",
+      "output": "static",
+      "publicPath": "/nutricombat-test/",
+      "build": {
+        "babel": {
+          "include": [
+            "@expo/vector-icons"
+          ]
+        }
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permite a NutriCombat usar la cámara para escanear alimentos."
+        }
+      ]
+    ]
+  }
+}
