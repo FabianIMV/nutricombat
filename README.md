@@ -34,3 +34,4 @@ npm start
 - Supabase para base de datos
 - React Navigation
 - AsyncStorage / localStorage
+# Actualización de deploy
