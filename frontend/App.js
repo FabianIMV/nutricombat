@@ -4,14 +4,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
+import TabNavigator from './src/navigation/TabNavigator';
 import { COLORS } from './src/styles/colors';
+import { AuthProvider } from './src/context/AuthContext';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
       <StatusBar style="light" />
       <Stack.Navigator
         initialRouteName="Login"
@@ -36,11 +38,12 @@ export default function App() {
           options={{ title: 'Crear Cuenta' }}
         />
         <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{ title: 'Perfil del Atleta' }}
+          name="Main"
+          component={TabNavigator}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { COLORS } from '../styles/colors';
-import { signUp } from '../services/supabase';
+import { authService } from '../services/auth';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -11,30 +11,30 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     if (!email || !password || !fullName) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Error', 'Completa todos los campos');
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
+    if (password.length < 8) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 8 caracteres');
       return;
     }
 
     setLoading(true);
     try {
-      const { data, error } = await signUp(email, password, fullName);
+      const { data, error } = await authService.register(email, password, fullName);
 
       if (error) {
-        Alert.alert('Registration Error', error.message);
+        Alert.alert('Error de registro', error.message);
       } else {
         Alert.alert(
-          'Success',
-          'Registration successful! Please check your email to verify your account.',
+          'Éxito',
+          'Registro exitoso. Ya puedes iniciar sesión',
           [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
         );
       }
     } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred');
+      Alert.alert('Error', 'Ocurrió un error inesperado');
     } finally {
       setLoading(false);
     }
@@ -42,12 +42,12 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Create Account</Text>
-      <Text style={styles.subtitle}>Join the NutriCombat community</Text>
+      <Text style={styles.title}>Crear Cuenta</Text>
+      <Text style={styles.subtitle}>Únete a la comunidad NutriCombat</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Full Name"
+        placeholder="Nombre completo"
         placeholderTextColor={COLORS.textSecondary}
         value={fullName}
         onChangeText={setFullName}
@@ -55,7 +55,7 @@ export default function RegisterScreen({ navigation }) {
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Correo"
         placeholderTextColor={COLORS.textSecondary}
         value={email}
         onChangeText={setEmail}
@@ -65,7 +65,7 @@ export default function RegisterScreen({ navigation }) {
 
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Contraseña"
         placeholderTextColor={COLORS.textSecondary}
         value={password}
         onChangeText={setPassword}
@@ -80,7 +80,7 @@ export default function RegisterScreen({ navigation }) {
         {loading ? (
           <ActivityIndicator color={COLORS.primary} />
         ) : (
-          <Text style={styles.registerButtonText}>Create Account</Text>
+          <Text style={styles.registerButtonText}>Crear Cuenta</Text>
         )}
       </TouchableOpacity>
 
@@ -89,7 +89,7 @@ export default function RegisterScreen({ navigation }) {
         onPress={() => navigation.navigate('Login')}
       >
         <Text style={styles.loginLinkText}>
-          Already have an account? Login here
+¿Ya tienes cuenta? Inicia sesión aquí
         </Text>
       </TouchableOpacity>
     </View>
