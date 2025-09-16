@@ -1,0 +1,102 @@
+service: nutricombat-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    SUPABASE_URL: REMOVED_SUPABASE_URL
+    SUPABASE_ANON_KEY: REMOVED_ANON_KEY
+    STAGE: ${self:provider.stage}
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
+
+plugins:
+  - serverless-offline
+
+functions:
+  # Weight Cutting Calculator
+  calculateWeightCut:
+    handler: functions/weight-calculator.handler
+    events:
+      - http:
+          path: /calculate-weight-cut
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
+  # Safe Weight Loss Plan Generator
+  generateWeightPlan:
+    handler: functions/weight-plan-generator.handler
+    events:
+      - http:
+          path: /generate-weight-plan
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
+  # Nutrition Calculator
+  calculateNutrition:
+    handler: functions/nutrition-calculator.handler
+    events:
+      - http:
+          path: /calculate-nutrition
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
+  # Fighter Analytics
+  getAnalytics:
+    handler: functions/fighter-analytics.handler
+    events:
+      - http:
+          path: /analytics/{userId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    host: 0.0.0.0
