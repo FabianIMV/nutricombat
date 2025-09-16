@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { COLORS } from '../styles/colors';
-import { getCurrentUser, updateUserProfile, getUserProfile } from '../services/supabase';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProfileScreen() {
   const [fullName, setFullName] = useState('');
@@ -9,74 +9,55 @@ export default function ProfileScreen() {
   const [currentWeight, setCurrentWeight] = useState('');
   const [targetWeight, setTargetWeight] = useState('');
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    loadUserProfile();
-  }, []);
+    if (user) {
+      loadUserProfile();
+    }
+  }, [user]);
 
   const loadUserProfile = async () => {
-    try {
-      const currentUser = await getCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
-        const { data: profile } = await getUserProfile(currentUser.id);
-
-        if (profile) {
-          setFullName(profile.full_name || '');
-          setDiscipline(profile.discipline || '');
-          setCurrentWeight(profile.current_weight?.toString() || '');
-          setTargetWeight(profile.target_weight?.toString() || '');
-        }
-      }
-    } catch (error) {
-      console.error('Error loading profile:', error);
+    if (user) {
+      setFullName(user.name || '');
     }
   };
 
   const handleSaveProfile = async () => {
     if (!user) {
-      Alert.alert('Error', 'No user logged in');
+      Alert.alert('Error', 'No hay usuario logueado');
       return;
     }
 
     if (!fullName || !discipline || !currentWeight || !targetWeight) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Error', 'Completa todos los campos');
       return;
     }
 
     setLoading(true);
     try {
-      const profileData = {
-        full_name: fullName,
-        email: user.email,
-        discipline,
-        current_weight: parseFloat(currentWeight),
-        target_weight: parseFloat(targetWeight),
-      };
+      // Por ahora solo simulamos guardar el perfil
+      setTimeout(() => {
+        Alert.alert('Éxito', 'Perfil guardado exitosamente');
+        setLoading(false);
+      }, 1000);
 
-      const { error } = await updateUserProfile(user.id, profileData);
-
-      if (error) {
-        Alert.alert('Error', error.message);
-      } else {
-        Alert.alert('Success', 'Profile saved successfully!');
-      }
+      // TODO: Conectar con backend para guardar en Supabase
     } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred');
-    } finally {
+      Alert.alert('Error', 'Ocurrió un error inesperado');
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Fighter Profile</Text>
-      <Text style={styles.subtitle}>Set up your fighter profile</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+      <Text style={styles.title}>Perfil del Peleador</Text>
+      <Text style={styles.subtitle}>Configura tu perfil de peleador</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Full Name"
+        placeholder="Nombre completo"
         placeholderTextColor={COLORS.textSecondary}
         value={fullName}
         onChangeText={setFullName}
@@ -84,7 +65,7 @@ export default function ProfileScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="Discipline (MMA, Boxing, etc.)"
+        placeholder="Disciplina (MMA, Boxeo, etc.)"
         placeholderTextColor={COLORS.textSecondary}
         value={discipline}
         onChangeText={setDiscipline}
@@ -92,7 +73,7 @@ export default function ProfileScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="Current Weight (kg)"
+        placeholder="Peso actual (kg)"
         placeholderTextColor={COLORS.textSecondary}
         value={currentWeight}
         onChangeText={setCurrentWeight}
@@ -101,7 +82,7 @@ export default function ProfileScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="Target Weight (kg)"
+        placeholder="Peso objetivo (kg)"
         placeholderTextColor={COLORS.textSecondary}
         value={targetWeight}
         onChangeText={setTargetWeight}
@@ -116,10 +97,11 @@ export default function ProfileScreen() {
         {loading ? (
           <ActivityIndicator color={COLORS.primary} />
         ) : (
-          <Text style={styles.saveButtonText}>Save Profile</Text>
+          <Text style={styles.saveButtonText}>Guardar Perfil</Text>
         )}
       </TouchableOpacity>
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 

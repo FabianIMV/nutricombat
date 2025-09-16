@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { COLORS } from '../styles/colors';
-import { signIn } from '../services/supabase';
+import { authService } from '../services/auth';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -16,13 +18,20 @@ export default function LoginScreen({ navigation }) {
 
     setLoading(true);
     try {
-      const { data, error } = await signIn(email, password);
+      const { data, error } = await authService.login(email, password);
 
       if (error) {
         Alert.alert('Error de inicio', error.message);
       } else {
+        // Guardar usuario en contexto
+        await login(data.user, {
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          idToken: data.idToken
+        });
+
         Alert.alert('Éxito', 'Inicio de sesión exitoso', [
-          { text: 'OK', onPress: () => navigation.navigate('Profile') }
+          { text: 'OK', onPress: () => navigation.navigate('Main') }
         ]);
       }
     } catch (error) {
