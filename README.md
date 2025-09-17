@@ -4,39 +4,33 @@
 
 <img width="922" height="288" alt="image" src="https://github.com/user-attachments/assets/dcc97f21-7071-4a02-8b85-7ee899423f47" />
 
-
 ---
 
 ## Descripción del Proyecto
 
-NutriCombat es una Progressive Web App diseñada específicamente para atletas de deportes de combate que necesitan realizar procesos de corte de peso para competencias oficiales. La aplicación utiliza inteligencia artificial para generar planes personalizados de corte de peso y proporciona herramientas especializadas que no están disponibles en aplicaciones de nutrición convencionales.
+NutriCombat es una Progressive Web App diseñada para atletas de deportes de combate que necesitan realizar procesos de corte de peso para competencias oficiales. La aplicación utiliza inteligencia artificial para generar planes personalizados de nutrición y proporciona herramientas especializadas que no están disponibles en aplicaciones de nutrición convencionales.
 
 ### Problema que Resuelve
 
-Los peleadores de boxing, MMA, judo, muay thai y otras disciplinas de combate enfrentan el desafío técnico del "corte de peso": perder peso de manera controlada en los 5-7 días previos al pesaje oficial, para luego recuperar peso estratégicamente antes de la competencia. Este proceso requiere conocimiento específico sobre manipulación de macronutrientes, control de hidratación y timing preciso que las aplicaciones genéricas de nutrición no proporcionan.
+Los peleadores de boxing, MMA, judo, muay thai y otras disciplinas de combate enfrentan el desafío técnico del "corte de peso": perder peso de manera controlada en los 5-7 días previos al pesaje oficial y luego recuperar peso estratégicamente antes de la competencia. Este proceso requiere control de macronutrientes, hidratación y timing preciso que las aplicaciones genéricas no proporcionan.
 
 ### Diferencial Competitivo
 
-- **Aplicaciones genéricas (MyFitnessPal):** "Quiero perder 5kg" - enfoque general
+- **Aplicaciones genéricas (MyFitnessPal):** "Quiero perder 5kg" - enfoque general  
 - **NutriCombat:** "Necesito pesar exactamente 70kg el 15 de octubre para pesaje oficial de box" - enfoque especializado
 
-La aplicación integra algoritmos específicos para corte de peso, validaciones de seguridad médica, y sistemas de alertas basados en el timeline de competencia.
+La aplicación integra validaciones de seguridad médica y sistemas de alertas basados en el timeline de competencia.
 
 ---
 
 ## Características Principales
 
-### Calculadora de corte de peso
-- Algoritmos especializados basados en peso actual, objetivo y días disponibles
-- Validaciones de seguridad (máximo 8% del peso corporal)
-- Diferenciación entre pérdida de grasa vs. agua
-- Personalización por disciplina deportiva
-
-### Integración con IA (Gemini)
-- Análisis automático de alimentos mediante fotografías
-- Recomendaciones contextuales según fase de corte actual
-- Prompts especializados para deportes de combate
-- Alertas específicas por contenido de sodio, carbohidratos y agua
+### Registro y cálculo de calorías (Integración con Gemini)
+- Registro diario de alimentos y comidas
+- Cálculo automático de calorías consumidas y macronutrientes
+- Análisis de alimentos mediante fotografías
+- Recomendaciones personalizadas según fase de corte
+- Alertas específicas por consumo de sodio, carbohidratos y agua
 
 ### Sistema de Alertas Inteligentes
 - Notificaciones basadas en timeline de competencia
@@ -55,22 +49,23 @@ La aplicación integra algoritmos específicos para corte de peso, validaciones 
 ## Arquitectura Técnica
 
 ### Frontend
-- React Native con Expo para desarrollo multiplataforma (Android & iOS)
+- React Native con Expo (Android & iOS)
 - JavaScript
 - Llamadas a API Gateway para autenticación y registro de usuarios
 
 ### Backend
 - AWS Lambda Functions para lógica de negocio serverless
 - API Gateway para exposición de endpoints
-- AWS Cognito para autenticación de usuarios
-- Supabase (PostgreSQL) para almacenamiento de datos de la aplicación
+- AWS Cognito para autenticación
+- Supabase (PostgreSQL) para almacenamiento de datos
 
 ### Flujo de datos
 - Autenticación: Frontend → API Gateway → Lambda Auth → Cognito
 - Datos: Frontend → API Gateway → Lambda Business → Supabase
+- Registro/calculo de calorías: Frontend → Gemini API → Supabase
 
 ### Servicios de IA
-- **Google Gemini API** para análisis de alimentos y generación de planes
+- **Google Gemini API** para análisis de alimentos y cálculo de calorías
 
 ---
 
@@ -99,7 +94,7 @@ cp .env.example .env
 
 # Iniciar desarrollo
 npm start
-```
+
 
 ### Variables de Entorno Necesarias
 
@@ -124,14 +119,14 @@ src/
 │   ├── auth/          # Autenticación
 │   ├── dashboard/     # Dashboard principal
 │   ├── weight-cut/    # Funcionalidades de corte
-│   └── food/          # Análisis de alimentos
+│   └── food/          # Registro y análisis de alimentos
 ├── services/          # Servicios externos
 │   ├── api/           # Llamadas a APIs
 │   ├── gemini/        # Integración con Gemini
 │   └── supabase/      # Cliente de base de datos
 ├── utils/             # Utilidades y helpers
-│   ├── calculations/  # Algoritmos de corte de peso
 │   └── validators/    # Validaciones de seguridad
+
 ```
 
 ---
