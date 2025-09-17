@@ -58,6 +58,7 @@ La aplicación integra validaciones de seguridad médica y sistemas de alertas b
 - API Gateway para exposición de endpoints
 - AWS Cognito para autenticación
 - Supabase (PostgreSQL) para almacenamiento de datos
+- AWS S3 como repositorio de imágenes
 
 ### Flujo de datos
 - Autenticación: Frontend → API Gateway → Lambda Auth → Cognito
