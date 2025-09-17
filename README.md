@@ -2,6 +2,9 @@
 
 **Aplicación de nutrición especializada para deportes de combate**
 
+<img width="922" height="288" alt="image" src="https://github.com/user-attachments/assets/dcc97f21-7071-4a02-8b85-7ee899423f47" />
+
+
 ---
 
 ## Descripción del Proyecto
