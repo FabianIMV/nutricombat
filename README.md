@@ -1,37 +1,192 @@
 # NutriCombat
 
-Aplicación de corte de peso para atletas de combate.
+**Aplicación de nutrición especializada para deportes de combate**
 
-## Características
+---
 
-- Registro y autenticación de usuarios
-- Sistema híbrido: Supabase + fallback local
-- Gestión de perfiles de atleta
-- Dashboard de seguimiento
+## Descripción del Proyecto
 
-## Configuración
+NutriCombat es una Progressive Web App diseñada específicamente para atletas de deportes de combate que necesitan realizar procesos de corte de peso para competencias oficiales. La aplicación utiliza inteligencia artificial para generar planes personalizados de corte de peso y proporciona herramientas especializadas que no están disponibles en aplicaciones de nutrición convencionales.
 
-1. Instalar dependencias:
+### Problema que Resuelve
+
+Los peleadores de boxing, MMA, judo, muay thai y otras disciplinas de combate enfrentan el desafío técnico del "corte de peso": perder peso de manera controlada en los 5-7 días previos al pesaje oficial, para luego recuperar peso estratégicamente antes de la competencia. Este proceso requiere conocimiento específico sobre manipulación de macronutrientes, control de hidratación y timing preciso que las aplicaciones genéricas de nutrición no proporcionan.
+
+### Diferencial Competitivo
+
+- **Aplicaciones genéricas (MyFitnessPal):** "Quiero perder 5kg" - enfoque general
+- **NutriCombat:** "Necesito pesar exactamente 70kg el 15 de octubre para pesaje oficial de box" - enfoque especializado
+
+La aplicación integra algoritmos específicos para corte de peso, validaciones de seguridad médica, y sistemas de alertas basados en el timeline de competencia.
+
+---
+
+## Características Principales
+
+### Calculadora de corte de peso
+- Algoritmos especializados basados en peso actual, objetivo y días disponibles
+- Validaciones de seguridad (máximo 8% del peso corporal)
+- Diferenciación entre pérdida de grasa vs. agua
+- Personalización por disciplina deportiva
+
+### Integración con IA (Gemini)
+- Análisis automático de alimentos mediante fotografías
+- Recomendaciones contextuales según fase de corte actual
+- Prompts especializados para deportes de combate
+- Alertas específicas por contenido de sodio, carbohidratos y agua
+
+### Sistema de Alertas Inteligentes
+- Notificaciones basadas en timeline de competencia
+- Alertas de seguridad médica automáticas
+- Recordatorios específicos por fase de corte
+- Protocolo de recuperación post-pesaje
+
+### Tracking Especializado
+- Registro de peso diario con contexto de corte
+- Control de hidratación por fases
+- Monitoreo de macronutrientes críticos
+- Dashboard con métricas específicas para combat sports
+
+---
+
+## Arquitectura Técnica
+
+### Frontend
+- React Native con Expo para desarrollo multiplataforma (Android & iOS)
+- JavaScript
+- Llamadas a API Gateway para autenticación y registro de usuarios
+
+### Backend
+- AWS Lambda Functions para lógica de negocio serverless
+- API Gateway para exposición de endpoints
+- AWS Cognito para autenticación de usuarios
+- Supabase (PostgreSQL) para almacenamiento de datos de la aplicación
+
+### Flujo de datos
+- Autenticación: Frontend → API Gateway → Lambda Auth → Cognito
+- Datos: Frontend → API Gateway → Lambda Business → Supabase
+
+### Servicios de IA
+- **Google Gemini API** para análisis de alimentos y generación de planes
+
+---
+
+## Instalación y Configuración
+
+### Prerrequisitos
+- Node.js 18+
+- Expo CLI
+- Cuenta de AWS configurada
+- API Key de Google Gemini
+- Proyecto Supabase configurado
+
+### Setup del Proyecto
+
 ```bash
-cd frontend
+# Clonar repositorio
+git clone https://github.com/usuario/nutricombat
+cd nutricombat/frontend
+
+# Instalar dependencias
 npm install
-```
 
-2. Configurar variables de entorno:
-```bash
+# Configurar variables de entorno
 cp .env.example .env
-# Editar .env con tus credenciales de Supabase
-```
+# Editar .env con tus credenciales
 
-3. Iniciar desarrollo:
-```bash
+# Iniciar desarrollo
 npm start
 ```
 
-## Tecnologías
+### Variables de Entorno Necesarias
 
-- React Native / Expo
-- Supabase para base de datos
-- React Navigation
-- AsyncStorage / localStorage
-# Actualización de deploy
+```env
+SUPABASE_URL=tu_supabase_url
+SUPABASE_ANON_KEY=tu_supabase_key
+GEMINI_API_KEY=tu_gemini_api_key
+AWS_ACCESS_KEY_ID=tu_aws_access_key
+AWS_SECRET_ACCESS_KEY=tu_aws_secret_key
+```
+
+---
+
+## Estructura del Proyecto
+
+```
+src/
+├── components/          # Componentes reutilizables
+│   ├── common/         # Componentes genéricos
+│   └── specialized/    # Componentes específicos para corte de peso
+├── screens/            # Pantallas principales
+│   ├── auth/          # Autenticación
+│   ├── dashboard/     # Dashboard principal
+│   ├── weight-cut/    # Funcionalidades de corte
+│   └── food/          # Análisis de alimentos
+├── services/          # Servicios externos
+│   ├── api/           # Llamadas a APIs
+│   ├── gemini/        # Integración con Gemini
+│   └── supabase/      # Cliente de base de datos
+├── utils/             # Utilidades y helpers
+│   ├── calculations/  # Algoritmos de corte de peso
+│   └── validators/    # Validaciones de seguridad
+```
+
+---
+
+## Metodología de Desarrollo
+
+### Framework Ágil
+- Sprints de 2 semanas
+- Daily standups virtuales
+- Sprint planning con priorización de historias de usuario
+- Retrospectivas para mejora continua
+
+### Herramientas de Gestión
+- **Jira** para gestión de backlog y sprints
+- **GitHub** para control de versiones
+- **Figma** para diseño y prototipos
+- **WhatsApp** para comunicación del equipo
+
+### Definición de Done
+- Código revisado por al menos un compañero
+- Tests unitarios implementados
+- Funcionalidad probada en dispositivo físico
+- Documentación actualizada
+
+---
+
+## Equipo de Desarrollo
+
+**Fabián Muñoz** - Full Stack Developer (Frontend Focus)
+- Desarrollo de interfaz móvil React Native
+- Integración con APIs externas (Gemini)
+- Diseño UI/UX e implementación de mockups
+
+**Vicente Chacón** - Full Stack Developer (Backend Focus)  
+- Arquitectura del sistema backend
+- Configuración de servicios AWS
+- Implementación de APIs REST
+
+**Ignacio Carrasco** - Project Manager & QA Analyst
+- Gestión de metodología Scrum
+- Testing funcional y documentación
+- Coordinación de sprints y validación del producto
+
+---
+
+## Estado Actual del Proyecto
+
+### Sprint 1 (En Progreso)
+- Setup inicial del proyecto React Native
+- Configuración de base de datos Supabase
+- Sistema básico de autenticación
+- Pantallas base de navegación
+
+### Roadmap General
+- **MVP (Sprints 1-2):** Funcionalidades core de corte de peso
+- **Funcionalidades Avanzadas (Sprints 3-4):** Dashboard especializado, análisis avanzado
+- **Optimización (Sprints 5-6):** PWA, funcionalidades offline, pulido final
+
+---
+
+**Importante:** Esta aplicación no reemplaza la supervisión médica profesional. Los usuarios deben consultar con profesionales de la salud antes de iniciar cualquier plan de corte de peso.
