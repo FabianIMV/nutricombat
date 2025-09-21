@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfileScreen() {
-  const [fullName, setFullName] = useState('');
-  const [discipline, setDiscipline] = useState('');
-  const [currentWeight, setCurrentWeight] = useState('');
-  const [targetWeight, setTargetWeight] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [profileData, setProfileData] = useState({
+    fullName: '',
+    discipline: '',
+    currentWeight: '',
+    targetWeight: '',
+    height: '',
+    age: ''
+  });
   const { user } = useAuth();
 
   useEffect(() => {
@@ -19,89 +22,74 @@ export default function ProfileScreen() {
 
   const loadUserProfile = async () => {
     if (user) {
-      setFullName(user.name || '');
-    }
-  };
-
-  const handleSaveProfile = async () => {
-    if (!user) {
-      Alert.alert('Error', 'No hay usuario logueado');
-      return;
-    }
-
-    if (!fullName || !discipline || !currentWeight || !targetWeight) {
-      Alert.alert('Error', 'Completa todos los campos');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // Por ahora solo simulamos guardar el perfil
-      setTimeout(() => {
-        Alert.alert('Éxito', 'Perfil guardado exitosamente');
-        setLoading(false);
-      }, 1000);
-
-      // TODO: Conectar con backend para guardar en Supabase
-    } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error inesperado');
-      setLoading(false);
+      setProfileData(prev => ({
+        ...prev,
+        fullName: user.name || 'Usuario'
+      }));
+      // TODO: Load complete profile data from Supabase
     }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-      <Text style={styles.title}>Perfil del Peleador</Text>
-      <Text style={styles.subtitle}>Configura tu perfil de peleador</Text>
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Mi Perfil</Text>
+        <Text style={styles.subtitle}>Información del peleador</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre completo"
-        placeholderTextColor={COLORS.textSecondary}
-        value={fullName}
-        onChangeText={setFullName}
-      />
+        <View style={styles.profileCard}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>
+                {profileData.fullName.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+            <Text style={styles.userName}>{profileData.fullName}</Text>
+          </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Disciplina (MMA, Boxeo, etc.)"
-        placeholderTextColor={COLORS.textSecondary}
-        value={discipline}
-        onChangeText={setDiscipline}
-      />
+          <View style={styles.infoSection}>
+            <Text style={styles.sectionTitle}>Información Personal</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Peso actual (kg)"
-        placeholderTextColor={COLORS.textSecondary}
-        value={currentWeight}
-        onChangeText={setCurrentWeight}
-        keyboardType="numeric"
-      />
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Nombre:</Text>
+              <Text style={styles.infoValue}>{profileData.fullName || 'No especificado'}</Text>
+            </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Peso objetivo (kg)"
-        placeholderTextColor={COLORS.textSecondary}
-        value={targetWeight}
-        onChangeText={setTargetWeight}
-        keyboardType="numeric"
-      />
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Edad:</Text>
+              <Text style={styles.infoValue}>{profileData.age || 'No especificado'}</Text>
+            </View>
 
-      <TouchableOpacity
-        style={[styles.saveButton, loading && styles.disabledButton]}
-        onPress={handleSaveProfile}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color={COLORS.primary} />
-        ) : (
-          <Text style={styles.saveButtonText}>Guardar Perfil</Text>
-        )}
-      </TouchableOpacity>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Altura:</Text>
+              <Text style={styles.infoValue}>{profileData.height ? `${profileData.height} cm` : 'No especificado'}</Text>
+            </View>
+          </View>
+
+          <View style={styles.infoSection}>
+            <Text style={styles.sectionTitle}>Información Deportiva</Text>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Disciplina:</Text>
+              <Text style={styles.infoValue}>{profileData.discipline || 'No especificado'}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Peso Actual:</Text>
+              <Text style={styles.infoValue}>{profileData.currentWeight ? `${profileData.currentWeight} kg` : 'No especificado'}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Peso Objetivo:</Text>
+              <Text style={styles.infoValue}>{profileData.targetWeight ? `${profileData.targetWeight} kg` : 'No especificado'}</Text>
+            </View>
+          </View>
+
+          <Text style={styles.editNote}>
+            Para editar tu perfil, ve a Configuración > Modificar mi perfil
+          </Text>
+        </View>
       </View>
-    </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 
@@ -109,43 +97,89 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+  },
+  content: {
+    padding: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: COLORS.text,
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     color: COLORS.textSecondary,
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 30,
   },
-  input: {
+  profileCard: {
     backgroundColor: COLORS.accent,
-    color: COLORS.text,
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    fontSize: 16,
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
   },
-  saveButton: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: 8,
-    padding: 15,
+  avatarContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginBottom: 25,
   },
-  saveButtonText: {
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  avatarText: {
+    fontSize: 32,
+    fontWeight: 'bold',
     color: COLORS.primary,
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.text,
+  },
+  infoSection: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: COLORS.secondary,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary,
+    paddingBottom: 5,
   },
-  disabledButton: {
-    opacity: 0.6,
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary,
+  },
+  infoLabel: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+    fontWeight: '500',
+  },
+  infoValue: {
+    fontSize: 16,
+    color: COLORS.text,
+    fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'right',
+  },
+  editNote: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginTop: 15,
   },
 });

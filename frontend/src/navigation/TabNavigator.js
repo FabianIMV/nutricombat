@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../styles/colors';
 
-import ProfileScreen from '../screens/ProfileScreen';
+import WeightCutCalculatorScreen from '../screens/WeightCutCalculatorScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ScannerScreen from '../screens/ScannerScreen';
 import ConfigScreen from '../screens/ConfigScreen';
@@ -17,8 +17,8 @@ export default function TabNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
+          if (route.name === 'Calculator') {
+            iconName = focused ? 'calculator' : 'calculator-outline';
           } else if (route.name === 'Dashboard') {
             iconName = focused ? 'analytics' : 'analytics-outline';
           } else if (route.name === 'Scanner') {
@@ -45,9 +45,9 @@ export default function TabNavigator() {
       })}
     >
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ title: 'Perfil' }}
+        name="Calculator"
+        component={WeightCutCalculatorScreen}
+        options={{ title: 'Calculadora' }}
       />
       <Tab.Screen
         name="Dashboard"
@@ -57,7 +57,7 @@ export default function TabNavigator() {
       <Tab.Screen
         name="Scanner"
         component={ScannerScreen}
-        options={{ title: 'Scanner' }}
+        options={{ title: 'Escaner' }}
       />
       <Tab.Screen
         name="Config"

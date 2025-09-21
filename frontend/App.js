@@ -6,6 +6,8 @@ import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 import NutritionResultsScreen from './src/screens/NutritionResultsScreen';
+import EditProfileScreen from './src/screens/EditProfileScreen';
+import WeightCutResultsScreen from './src/screens/WeightCutResultsScreen';
 import { COLORS } from './src/styles/colors';
 import { AuthProvider } from './src/context/AuthContext';
 
@@ -47,6 +49,16 @@ export default function App() {
           name="NutritionResults"
           component={NutritionResultsScreen}
           options={{ title: 'Resultados del Análisis' }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfileScreen}
+          options={{ title: 'Editar Perfil' }}
+        />
+        <Stack.Screen
+          name="WeightCutResults"
+          component={WeightCutResultsScreen}
+          options={{ title: 'Plan de Corte de Peso' }}
         />
       </Stack.Navigator>
       </NavigationContainer>
