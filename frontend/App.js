@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import TabNavigator from './src/navigation/TabNavigator';
+import NutritionResultsScreen from './src/screens/NutritionResultsScreen';
 import { COLORS } from './src/styles/colors';
 import { AuthProvider } from './src/context/AuthContext';
 
@@ -41,6 +42,11 @@ export default function App() {
           name="Main"
           component={TabNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="NutritionResults"
+          component={NutritionResultsScreen}
+          options={{ title: 'Resultados del Análisis' }}
         />
       </Stack.Navigator>
       </NavigationContainer>
