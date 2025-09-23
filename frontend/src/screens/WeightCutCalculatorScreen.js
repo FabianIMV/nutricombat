@@ -8,7 +8,10 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  Animated
+  Animated,
+  Platform,
+  Modal,
+  FlatList
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { COLORS } from '../styles/colors';
@@ -29,6 +32,9 @@ export default function WeightCutCalculatorScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [spinValue] = useState(new Animated.Value(0));
+  const [showExperienceModal, setShowExperienceModal] = useState(false);
+  const [showSportModal, setShowSportModal] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
 
   useEffect(() => {
     if (isLoading) {
@@ -94,6 +100,90 @@ export default function WeightCutCalculatorScreen({ navigation }) {
       ...prev,
       [field]: value
     }));
+  };
+
+  const experienceOptions = [
+    { label: 'Principiante', value: 'principiante' },
+    { label: 'Amateur', value: 'amateur' },
+    { label: 'Profesional', value: 'profesional' }
+  ];
+
+  const sportOptions = [
+    { label: 'Boxeo', value: 'boxeo' },
+    { label: 'MMA', value: 'mma' },
+    { label: 'Muay Thai', value: 'muay-thai' },
+    { label: 'Judo', value: 'judo' },
+    { label: 'BJJ', value: 'bjj' },
+    { label: 'Kickboxing', value: 'kickboxing' }
+  ];
+
+  const modelOptions = [
+    { label: 'Gemini 2.5 Flash (Rápido)', value: 'gemini-2.5-flash' },
+    { label: 'Gemini 2.5 Pro (Detallado)', value: 'gemini-2.5-pro' }
+  ];
+
+  const IOSSelector = ({ options, selectedValue, onSelect, placeholder, modalVisible, setModalVisible }) => {
+    const selectedOption = options.find(opt => opt.value === selectedValue);
+
+    return (
+      <>
+        <TouchableOpacity
+          style={styles.iosSelectorButton}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.iosSelectorText}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </Text>
+          <Text style={styles.iosSelectorArrow}>▼</Text>
+        </TouchableOpacity>
+
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Seleccionar opción</Text>
+              <FlatList
+                data={options}
+                keyExtractor={(item) => item.value}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.optionItem,
+                      item.value === selectedValue && styles.selectedOption
+                    ]}
+                    onPress={() => {
+                      onSelect(item.value);
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Text style={[
+                      styles.optionText,
+                      item.value === selectedValue && styles.selectedOptionText
+                    ]}>
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </>
+    );
   };
 
   const handleAnalyze = async () => {
@@ -224,37 +314,59 @@ export default function WeightCutCalculatorScreen({ navigation }) {
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Nivel de Experiencia *</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
+            {Platform.OS === 'ios' ? (
+              <IOSSelector
+                options={experienceOptions}
                 selectedValue={formData.experienceLevel}
-                style={styles.picker}
-                onValueChange={(value) => handleInputChange('experienceLevel', value)}
-                dropdownIconColor={COLORS.secondary}
-              >
-                <Picker.Item label="Principiante" value="principiante" />
-                <Picker.Item label="Amateur" value="amateur" />
-                <Picker.Item label="Profesional" value="profesional" />
-              </Picker>
-            </View>
+                onSelect={(value) => handleInputChange('experienceLevel', value)}
+                placeholder="Seleccionar nivel"
+                modalVisible={showExperienceModal}
+                setModalVisible={setShowExperienceModal}
+              />
+            ) : (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.experienceLevel}
+                  style={styles.picker}
+                  onValueChange={(value) => handleInputChange('experienceLevel', value)}
+                  dropdownIconColor={COLORS.secondary}
+                >
+                  <Picker.Item label="Principiante" value="principiante" />
+                  <Picker.Item label="Amateur" value="amateur" />
+                  <Picker.Item label="Profesional" value="profesional" />
+                </Picker>
+              </View>
+            )}
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Deporte de Combate *</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
+            {Platform.OS === 'ios' ? (
+              <IOSSelector
+                options={sportOptions}
                 selectedValue={formData.combatSport}
-                style={styles.picker}
-                onValueChange={(value) => handleInputChange('combatSport', value)}
-                dropdownIconColor={COLORS.secondary}
-              >
-                <Picker.Item label="Boxeo" value="boxeo" />
-                <Picker.Item label="MMA" value="mma" />
-                <Picker.Item label="Muay Thai" value="muay-thai" />
-                <Picker.Item label="Judo" value="judo" />
-                <Picker.Item label="BJJ" value="bjj" />
-                <Picker.Item label="Kickboxing" value="kickboxing" />
-              </Picker>
-            </View>
+                onSelect={(value) => handleInputChange('combatSport', value)}
+                placeholder="Seleccionar deporte"
+                modalVisible={showSportModal}
+                setModalVisible={setShowSportModal}
+              />
+            ) : (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.combatSport}
+                  style={styles.picker}
+                  onValueChange={(value) => handleInputChange('combatSport', value)}
+                  dropdownIconColor={COLORS.secondary}
+                >
+                  <Picker.Item label="Boxeo" value="boxeo" />
+                  <Picker.Item label="MMA" value="mma" />
+                  <Picker.Item label="Muay Thai" value="muay-thai" />
+                  <Picker.Item label="Judo" value="judo" />
+                  <Picker.Item label="BJJ" value="bjj" />
+                  <Picker.Item label="Kickboxing" value="kickboxing" />
+                </Picker>
+              </View>
+            )}
           </View>
         </View>
 
@@ -295,17 +407,28 @@ export default function WeightCutCalculatorScreen({ navigation }) {
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Modelo de IA</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
+            {Platform.OS === 'ios' ? (
+              <IOSSelector
+                options={modelOptions}
                 selectedValue={formData.model}
-                style={styles.picker}
-                onValueChange={(value) => handleInputChange('model', value)}
-                dropdownIconColor={COLORS.secondary}
-              >
-                <Picker.Item label="Gemini 2.5 Flash (Rápido)" value="gemini-2.5-flash" />
-                <Picker.Item label="Gemini 2.5 Pro (Detallado)" value="gemini-2.5-pro" />
-              </Picker>
-            </View>
+                onSelect={(value) => handleInputChange('model', value)}
+                placeholder="Seleccionar modelo"
+                modalVisible={showModelModal}
+                setModalVisible={setShowModelModal}
+              />
+            ) : (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.model}
+                  style={styles.picker}
+                  onValueChange={(value) => handleInputChange('model', value)}
+                  dropdownIconColor={COLORS.secondary}
+                >
+                  <Picker.Item label="Gemini 2.5 Flash (Rápido)" value="gemini-2.5-flash" />
+                  <Picker.Item label="Gemini 2.5 Pro (Detallado)" value="gemini-2.5-pro" />
+                </Picker>
+              </View>
+            )}
           </View>
         </View>
 
@@ -463,5 +586,79 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontSize: 14,
     textAlign: 'center',
+  },
+  // iOS-specific selector styles
+  iosSelectorButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 50,
+  },
+  iosSelectorText: {
+    color: COLORS.text,
+    fontSize: 16,
+    flex: 1,
+  },
+  iosSelectorArrow: {
+    color: COLORS.secondary,
+    fontSize: 12,
+    marginLeft: 10,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 15,
+    padding: 20,
+    width: '100%',
+    maxWidth: 300,
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  optionItem: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 5,
+    backgroundColor: COLORS.primary,
+  },
+  selectedOption: {
+    backgroundColor: COLORS.secondary,
+  },
+  optionText: {
+    fontSize: 16,
+    color: COLORS.text,
+    textAlign: 'center',
+  },
+  selectedOptionText: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    marginTop: 15,
+    padding: 15,
+    backgroundColor: COLORS.primary,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: COLORS.textSecondary,
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
