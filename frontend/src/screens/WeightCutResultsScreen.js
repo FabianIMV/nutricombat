@@ -5,7 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  Modal,
+  Alert
 } from 'react-native';
 import { COLORS } from '../styles/colors';
 
@@ -14,9 +16,43 @@ const { width } = Dimensions.get('window');
 export default function WeightCutResultsScreen({ route, navigation }) {
   const { analysisResult, formData } = route.params;
   const [activeTab, setActiveTab] = useState('overview');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: '', content: '' });
 
   const handleNewAnalysis = () => {
     navigation.goBack();
+  };
+
+  const showInfoModal = (title, content) => {
+    setModalContent({ title, content });
+    setModalVisible(true);
+  };
+
+  const getInfoContent = (type) => {
+    switch (type) {
+      case 'tdee':
+        return {
+          title: 'TDEE Estimado',
+          content: 'El TDEE (Total Daily Energy Expenditure) es la cantidad total de calorías que tu cuerpo quema en un día, incluyendo el metabolismo basal, la actividad física y la digestión. Es fundamental para el corte de peso porque nos permite calcular el déficit calórico necesario para perder peso de manera efectiva y segura.'
+        };
+      case 'deficit':
+        return {
+          title: 'Déficit Objetivo',
+          content: 'El déficit calórico es la diferencia entre las calorías que consumes y las que quemas. Para perder peso, necesitas estar en déficit calórico. Un déficit moderado (300-500 cal/día) es más sostenible, mientras que déficits agresivos (500+ cal/día) permiten pérdida de peso más rápida pero requieren mayor cuidado.'
+        };
+      case 'duration':
+        return {
+          title: 'Duración del Plan',
+          content: 'La duración del plan de corte de peso está calculada en base a tus objetivos y la cantidad de peso a perder. Planes más cortos requieren déficits más agresivos y mayor disciplina, mientras que planes más largos permiten un enfoque más gradual y sostenible.'
+        };
+      case 'weightLoss':
+        return {
+          title: 'Peso a Perder',
+          content: 'Esta es la cantidad total de peso que necesitas perder para alcanzar tu objetivo. Incluye tanto grasa como agua corporal. Es importante recordar que no todo el peso perdido será grasa, especialmente en las primeras etapas del corte donde se pierde mucha agua.'
+        };
+      default:
+        return { title: '', content: '' };
+    }
   };
 
   const renderOverviewTab = () => (
@@ -25,29 +61,57 @@ export default function WeightCutResultsScreen({ route, navigation }) {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>📊 Resumen del Plan</Text>
         <View style={styles.summaryGrid}>
-          <View style={styles.summaryItem}>
+          <TouchableOpacity
+            style={styles.summaryItem}
+            onLongPress={() => {
+              const info = getInfoContent('weightLoss');
+              showInfoModal(info.title, info.content);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.summaryIcon}>⚖️</Text>
             <Text style={styles.summaryLabel}>Peso a perder</Text>
             <Text style={styles.summaryValue}>{analysisResult.actionPlan.summary.totalWeightToCutKg} kg</Text>
-          </View>
-          <View style={styles.summaryItem}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.summaryItem}
+            onLongPress={() => {
+              const info = getInfoContent('tdee');
+              showInfoModal(info.title, info.content);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.summaryIcon}>🔥</Text>
             <Text style={styles.summaryLabel}>TDEE estimado</Text>
             <Text style={styles.summaryValue}>{analysisResult.actionPlan.summary.estimatedTDEE}</Text>
             <Text style={styles.summaryUnit}>calorías</Text>
-          </View>
-          <View style={styles.summaryItem}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.summaryItem}
+            onLongPress={() => {
+              const info = getInfoContent('deficit');
+              showInfoModal(info.title, info.content);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.summaryIcon}>🎯</Text>
             <Text style={styles.summaryLabel}>Déficit objetivo</Text>
             <Text style={styles.summaryValue}>{analysisResult.actionPlan.summary.targetDeficitCalories}</Text>
             <Text style={styles.summaryUnit}>cal/día</Text>
-          </View>
-          <View style={styles.summaryItem}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.summaryItem}
+            onLongPress={() => {
+              const info = getInfoContent('duration');
+              showInfoModal(info.title, info.content);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.summaryIcon}>📅</Text>
             <Text style={styles.summaryLabel}>Duración</Text>
             <Text style={styles.summaryValue}>{formData.daysToCut}</Text>
             <Text style={styles.summaryUnit}>días</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -255,10 +319,40 @@ export default function WeightCutResultsScreen({ route, navigation }) {
         {activeTab === 'cardio' && renderCardioTab()}
         {activeTab === 'recommendations' && renderRecommendationsTab()}
 
-        <TouchableOpacity style={styles.newAnalysisButton} onPress={handleNewAnalysis}>
-          <Text style={styles.newAnalysisButtonText}>Nuevo Análisis</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.addToPlanButton} onPress={() => Alert.alert('Información', 'Esta funcionalidad se implementará pronto')}>
+            <Text style={styles.addToPlanButtonText}>Agregar al Plan de Corte</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.newAnalysisButton} onPress={handleNewAnalysis}>
+            <Text style={styles.newAnalysisButtonText}>Nuevo Análisis</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
+
+      {/* Info Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{modalContent.title}</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.closeButtonText}>×</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.modalBody}>
+              <Text style={styles.modalText}>{modalContent.content}</Text>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -530,17 +624,91 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontStyle: 'italic',
   },
+  buttonsContainer: {
+    padding: 20,
+    paddingTop: 10,
+  },
+  addToPlanButton: {
+    backgroundColor: COLORS.accent,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 15,
+    padding: 18,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  addToPlanButtonText: {
+    color: COLORS.secondary,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   newAnalysisButton: {
     backgroundColor: COLORS.secondary,
     borderRadius: 15,
     padding: 18,
     alignItems: 'center',
-    margin: 20,
-    marginTop: 10,
   },
   newAnalysisButtonText: {
     color: COLORS.primary,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '80%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    flex: 1,
+  },
+  closeButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  closeButtonText: {
+    color: COLORS.text,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  modalText: {
+    fontSize: 16,
+    color: COLORS.text,
+    lineHeight: 24,
   },
 });

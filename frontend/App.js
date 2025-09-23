@@ -43,7 +43,7 @@ export default function App() {
         <Stack.Screen
           name="Main"
           component={TabNavigator}
-          options={{ headerShown: false }}
+          options={{ title: 'Inicio', headerShown: false }}
         />
         <Stack.Screen
           name="NutritionResults"
