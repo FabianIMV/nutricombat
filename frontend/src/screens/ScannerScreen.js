@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
-  Animated
+  Animated,
+  RefreshControl
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { readAsStringAsync } from 'expo-file-system/legacy';
@@ -17,6 +18,7 @@ import { COLORS } from '../styles/colors';
 export default function ScannerScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [spinValue] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -32,6 +34,14 @@ export default function ScannerScreen({ navigation }) {
       spinValue.setValue(0);
     }
   }, [isLoading]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setSelectedImage(null);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
 
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
@@ -185,8 +195,24 @@ export default function ScannerScreen({ navigation }) {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[COLORS.secondary]}
+          tintColor={COLORS.secondary}
+        />
+      }
+    >
       <View style={styles.content}>
+        {refreshing && (
+          <View style={styles.loadingHeader}>
+            <ActivityIndicator size="small" color={COLORS.secondary} />
+            <Text style={styles.loadingText}>Limpiando interfaz...</Text>
+          </View>
+        )}
         <Text style={styles.title}>Análisis Nutricional</Text>
         <Text style={styles.subtitle}>Toma o selecciona una foto de tu comida</Text>
 
@@ -304,5 +330,12 @@ const styles = StyleSheet.create({
   loadingText: {
     color: COLORS.textSecondary,
     fontSize: 16,
+  },
+  loadingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    marginBottom: 15,
   },
 });

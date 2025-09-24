@@ -1,20 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, RefreshControl, ActivityIndicator } from 'react-native';
 import { COLORS } from '../styles/colors';
 
 const { width } = Dimensions.get('window');
 
 export default function DashboardScreen() {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    // Simulate data refresh
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[COLORS.secondary]}
+          tintColor={COLORS.secondary}
+        />
+      }
+    >
       <View style={styles.header}>
+        {refreshing && (
+          <View style={styles.loadingHeader}>
+            <ActivityIndicator size="small" color={COLORS.secondary} />
+            <Text style={styles.loadingText}>Actualizando datos...</Text>
+          </View>
+        )}
         <Text style={styles.headerTitle}>Dashboard Informativo</Text>
       </View>
 
       {/* Tiempo Restante Card */}
       <View style={styles.timeCard}>
-        <Icon name="time-outline" size={24} color="white" style={styles.cardIcon} />
         <Text style={styles.timeLabel}>TIEMPO RESTANTE</Text>
         <Text style={styles.timeValue}>3 DÍAS 14H</Text>
         <Text style={styles.timeSubtext}>hasta pesaje oficial</Text>
@@ -23,10 +48,9 @@ export default function DashboardScreen() {
       {/* Fase Actual Card */}
       <View style={styles.phaseCard}>
         <View style={styles.phaseContent}>
-          <Icon name="flash" size={20} color="#FFA500" />
           <Text style={styles.phaseTitle}>FASE: CORTE INTENSIVO</Text>
         </View>
-        <Text style={styles.phaseSubtitle}>Restricción de sodio y carbohidratos activa</Text>
+        <Text style={styles.phaseSubtitle}>Restriccion de sodio y carbohidratos activa</Text>
       </View>
 
       {/* Progreso de Peso */}
@@ -34,7 +58,7 @@ export default function DashboardScreen() {
         <Text style={styles.sectionTitle}>Progreso de Peso</Text>
         <View style={styles.weightProgress}>
           <Text style={styles.weightCurrent}>73.1kg</Text>
-          <Icon name="arrow-forward" size={20} color={COLORS.secondary} />
+          <Text style={styles.arrowText}>→</Text>
           <Text style={styles.weightTarget}>70.0kg</Text>
         </View>
         <Text style={styles.weightRemaining}>Faltan: 3.1kg</Text>
@@ -47,57 +71,53 @@ export default function DashboardScreen() {
         </View>
       </View>
 
-      {/* Métricas Row */}
+      {/* Metricas Row */}
       <View style={styles.metricsRow}>
         <View style={styles.metricCard}>
           <Text style={styles.metricTitle}>Sodio Hoy</Text>
           <Text style={styles.metricValue}>280mg</Text>
           <View style={styles.metricStatus}>
-            <Icon name="checkmark-circle" size={16} color="#4CAF50" />
-            <Text style={styles.metricLimit}>/400mg límite</Text>
+            <Text style={styles.metricIcon}>✓</Text>
+            <Text style={styles.metricLimit}>/400mg limite</Text>
           </View>
         </View>
 
         <View style={styles.metricCard}>
-          <Text style={styles.metricTitle}>Hidratación</Text>
+          <Text style={styles.metricTitle}>Hidratacion</Text>
           <Text style={styles.metricValue}>1.8L</Text>
           <View style={styles.metricStatus}>
-            <Icon name="warning" size={16} color="#FF9800" />
-            <Text style={styles.metricLimit}>/2L límite</Text>
+            <Text style={styles.metricIconWarning}>!</Text>
+            <Text style={styles.metricLimit}>/2L limite</Text>
           </View>
         </View>
       </View>
 
-      {/* Alerta Crítica */}
+      {/* Alerta Critica */}
       <View style={styles.alertCard}>
         <View style={styles.alertContent}>
-          <Icon name="warning" size={20} color="white" />
-          <Text style={styles.alertTitle}>ALERTA CRÍTICA</Text>
+          <Text style={styles.alertIcon}>!</Text>
+          <Text style={styles.alertTitle}>ALERTA CRITICA</Text>
         </View>
-        <Text style={styles.alertText}>Reduce sodio desde HOY. Máximo 300mg/día</Text>
+        <Text style={styles.alertText}>Reduce sodio desde HOY. Maximo 300mg/dia</Text>
       </View>
 
-      {/* Acciones Rápidas */}
+      {/* Acciones Rapidas */}
       <View style={styles.actionsSection}>
-        <Text style={styles.sectionTitle}>Acciones Rápidas</Text>
+        <Text style={styles.sectionTitle}>Acciones Rapidas</Text>
         <View style={styles.actionsRow}>
           <TouchableOpacity style={[styles.actionButton, styles.actionGreen]}>
-            <Icon name="scale-outline" size={24} color="white" />
             <Text style={styles.actionText}>Peso</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.actionGreen]}>
-            <Icon name="water-outline" size={24} color="white" />
             <Text style={styles.actionText}>+250ml</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.actionGreen]}>
-            <Icon name="camera-outline" size={24} color="white" />
             <Text style={styles.actionText}>Comida</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.actionRed]}>
-            <Icon name="warning-outline" size={24} color="white" />
             <Text style={styles.actionText}>Urgencia</Text>
           </TouchableOpacity>
         </View>
@@ -128,9 +148,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     alignItems: 'center',
-  },
-  cardIcon: {
-    marginBottom: 5,
   },
   timeLabel: {
     color: 'white',
@@ -204,6 +221,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 10,
   },
+  arrowText: {
+    color: COLORS.secondary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginHorizontal: 10,
+  },
   weightRemaining: {
     color: COLORS.textSecondary,
     fontSize: 14,
@@ -264,6 +287,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginLeft: 5,
   },
+  metricIcon: {
+    color: '#4CAF50',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  metricIconWarning: {
+    color: '#FF9800',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   alertCard: {
     backgroundColor: '#FF6B6B',
     marginHorizontal: 20,
@@ -281,6 +314,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  alertIcon: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   alertText: {
     color: 'white',
@@ -314,5 +352,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 5,
     textAlign: 'center',
+  },
+  loadingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    marginBottom: 10,
+  },
+  loadingText: {
+    color: COLORS.secondary,
+    fontSize: 14,
+    marginLeft: 8,
+    fontWeight: '500',
   },
 });

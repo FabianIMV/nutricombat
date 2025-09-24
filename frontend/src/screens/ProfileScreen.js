@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfileScreen({ navigation }) {
   const [profileData, setProfileData] = useState({
-    fullName: '',
-    discipline: '',
-    currentWeight: '',
-    targetWeight: '',
+    name: '',
+    weight: '',
     height: '',
-    age: ''
+    age: '',
+    activity_level: '',
+    goals: ''
   });
+  const [refreshing, setRefreshing] = useState(false);
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -34,37 +34,83 @@ export default function ProfileScreen({ navigation }) {
   }, [user]);
 
   const loadUserProfile = async () => {
-    if (user) {
-      setProfileData(prev => ({
-        ...prev,
-        fullName: user.name || 'Usuario'
-      }));
-      // TODO: Load complete profile data from Supabase
+    if (user && user.email) {
+      try {
+        const response = await fetch('https://3f8q0vhfcf.execute-api.us-east-1.amazonaws.com/dev/profile?email=' + user.email);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data && data.data.length > 0) {
+            const profile = data.data[0];
+            setProfileData({
+              name: profile.name || user.name || 'Usuario',
+              weight: profile.weight || '',
+              height: profile.height || '',
+              age: profile.age || '',
+              activity_level: profile.activity_level || '',
+              goals: profile.goals || ''
+            });
+          } else {
+            setProfileData(prev => ({
+              ...prev,
+              name: user.name || 'Usuario'
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        setProfileData(prev => ({
+          ...prev,
+          name: user.name || 'Usuario'
+        }));
+      }
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadUserProfile();
+    setRefreshing(false);
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[COLORS.secondary]}
+          tintColor={COLORS.secondary}
+        />
+      }
+    >
       <View style={styles.content}>
+        {refreshing && (
+          <View style={styles.loadingHeader}>
+            <ActivityIndicator size="small" color={COLORS.secondary} />
+            <Text style={styles.loadingText}>Actualizando perfil...</Text>
+          </View>
+        )}
         <Text style={styles.title}>Mi Perfil</Text>
         <Text style={styles.subtitle}>Información del peleador</Text>
 
+        <Text style={styles.cardTitle}>Perfil General</Text>
         <View style={styles.profileCard}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>
-                {profileData.fullName.charAt(0).toUpperCase()}
+                {profileData.name.charAt(0).toUpperCase()}
               </Text>
             </View>
-            <Text style={styles.userName}>{profileData.fullName}</Text>
+            <Text style={styles.userName}>{profileData.name}</Text>
           </View>
 
+          <Text style={styles.cardTitle}>Información Personal</Text>
           <View style={styles.infoSection}>
-            <Text style={styles.sectionTitle}>Información Personal</Text>
 
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Nombre:</Text>
-              <Text style={styles.infoValue}>{profileData.fullName || 'No especificado'}</Text>
+              <Text style={styles.infoValue}>{profileData.name || 'No especificado'}</Text>
             </View>
 
             <View style={styles.infoRow}>
@@ -76,36 +122,35 @@ export default function ProfileScreen({ navigation }) {
               <Text style={styles.infoLabel}>Altura:</Text>
               <Text style={styles.infoValue}>{profileData.height ? `${profileData.height} cm` : 'No especificado'}</Text>
             </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Peso:</Text>
+              <Text style={styles.infoValue}>{profileData.weight ? `${profileData.weight} kg` : 'No especificado'}</Text>
+            </View>
           </View>
 
+          <Text style={styles.cardTitle}>Salud y Fitness</Text>
           <View style={styles.infoSection}>
-            <Text style={styles.sectionTitle}>Información Deportiva</Text>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Disciplina:</Text>
-              <Text style={styles.infoValue}>{profileData.discipline || 'No especificado'}</Text>
+              <Text style={styles.infoLabel}>Nivel de Actividad:</Text>
+              <Text style={styles.infoValue}>{profileData.activity_level || 'No especificado'}</Text>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Peso Actual:</Text>
-              <Text style={styles.infoValue}>{profileData.currentWeight ? `${profileData.currentWeight} kg` : 'No especificado'}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Peso Objetivo:</Text>
-              <Text style={styles.infoValue}>{profileData.targetWeight ? `${profileData.targetWeight} kg` : 'No especificado'}</Text>
+              <Text style={styles.infoLabel}>Objetivos:</Text>
+              <Text style={styles.infoValue}>{profileData.goals || 'No especificado'}</Text>
             </View>
           </View>
 
         </View>
 
         {/* Sección de Configuraciones */}
+        <Text style={styles.cardTitle}>Configuración</Text>
         <View style={styles.configSection}>
-          <Text style={styles.configTitle}>Configuración</Text>
 
           <TouchableOpacity style={styles.configButton} onPress={handleEditProfile}>
             <View style={styles.configButtonContent}>
-              <Text style={styles.iconText}>✏️</Text>
               <Text style={styles.configButtonText}>Modificar mi perfil</Text>
             </View>
             <Text style={styles.arrowText}>›</Text>
@@ -113,7 +158,6 @@ export default function ProfileScreen({ navigation }) {
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <View style={styles.configButtonContent}>
-              <Text style={styles.iconTextWhite}>🚪</Text>
               <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
             </View>
           </TouchableOpacity>
@@ -267,5 +311,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLORS.textSecondary,
     fontWeight: 'bold',
+  },
+  loadingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    marginBottom: 15,
+  },
+  loadingText: {
+    color: COLORS.secondary,
+    fontSize: 14,
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.secondary,
+    marginBottom: 10,
+    marginTop: 15,
+    paddingHorizontal: 5,
   },
 });
