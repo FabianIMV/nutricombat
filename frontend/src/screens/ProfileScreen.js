@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   const [profileData, setProfileData] = useState({
     fullName: '',
     discipline: '',
@@ -12,7 +13,19 @@ export default function ProfileScreen() {
     height: '',
     age: ''
   });
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
+
+  const handleEditProfile = () => {
+    navigation.navigate('EditProfile');
+  };
 
   useEffect(() => {
     if (user) {
@@ -84,9 +97,26 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <Text style={styles.editNote}>
-            Para editar tu perfil, ve a Configuración > Modificar mi perfil
-          </Text>
+        </View>
+
+        {/* Sección de Configuraciones */}
+        <View style={styles.configSection}>
+          <Text style={styles.configTitle}>Configuración</Text>
+
+          <TouchableOpacity style={styles.configButton} onPress={handleEditProfile}>
+            <View style={styles.configButtonContent}>
+              <Text style={styles.iconText}>✏️</Text>
+              <Text style={styles.configButtonText}>Modificar mi perfil</Text>
+            </View>
+            <Text style={styles.arrowText}>›</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <View style={styles.configButtonContent}>
+              <Text style={styles.iconTextWhite}>🚪</Text>
+              <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -175,11 +205,67 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right',
   },
-  editNote: {
-    fontSize: 14,
+  configSection: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
+  },
+  configTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.secondary,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary,
+    paddingBottom: 5,
+  },
+  configButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  configButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  configButtonText: {
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 12,
+  },
+  logoutButton: {
+    backgroundColor: COLORS.error || '#FF6B6B',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  iconText: {
+    fontSize: 18,
+    marginRight: 12,
+  },
+  iconTextWhite: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+  arrowText: {
+    fontSize: 18,
     color: COLORS.textSecondary,
-    textAlign: 'center',
-    fontStyle: 'italic',
-    marginTop: 15,
+    fontWeight: 'bold',
   },
 });

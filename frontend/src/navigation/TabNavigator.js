@@ -7,7 +7,6 @@ import WeightCutCalculatorScreen from '../screens/WeightCutCalculatorScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ScannerScreen from '../screens/ScannerScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import ConfigScreen from '../screens/ConfigScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -26,8 +25,6 @@ export default function TabNavigator() {
             iconName = focused ? 'scan' : 'scan-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Config') {
-            iconName = focused ? 'settings' : 'settings-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -66,11 +63,6 @@ export default function TabNavigator() {
         name="Profile"
         component={ProfileScreen}
         options={{ title: 'Perfil' }}
-      />
-      <Tab.Screen
-        name="Config"
-        component={ConfigScreen}
-        options={{ title: 'Configuración' }}
       />
     </Tab.Navigator>
   );
