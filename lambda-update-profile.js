@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = 'REMOVED_SUPABASE_URL';
-const supabaseKey = 'REMOVED_SERVICE_ROLE_KEY';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -48,7 +48,7 @@ exports.handler = async (event) => {
         }
 
         if (event.httpMethod === 'POST') {
-            const { email, name, weight, height, age, activity_level, goals } = JSON.parse(event.body);
+            const { email, name, weight, height, age, activity_level, goals, profile_picture_url } = JSON.parse(event.body);
 
             if (!email) {
                 return {
@@ -68,6 +68,7 @@ exports.handler = async (event) => {
                     age,
                     activity_level,
                     goals,
+                    profile_picture_url,
                     updated_at: new Date().toISOString()
                 }, {
                     onConflict: 'email'

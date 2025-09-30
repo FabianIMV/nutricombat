@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import * as FileSystem from 'expo-file-system';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key';
@@ -56,4 +57,60 @@ export const getUserProfile = async (userId) => {
     .eq('id', userId)
     .single();
   return { data, error };
+};
+
+// Upload profile picture to Supabase Storage
+export const uploadProfilePicture = async (userId, uri) => {
+  try {
+    const fileExt = uri.split('.').pop().toLowerCase();
+    const fileName = `${userId}-${Date.now()}.${fileExt}`;
+
+    // Usar FormData para subir el archivo
+    const formData = new FormData();
+    formData.append('file', {
+      uri: uri,
+      name: fileName,
+      type: `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`,
+    });
+
+    // Subir usando fetch directo con FormData
+    const uploadResponse = await fetch(
+      `${supabaseUrl}/storage/v1/object/profile-pictures/${fileName}`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(errorText);
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('profile-pictures')
+      .getPublicUrl(fileName);
+
+    return { publicUrl: publicUrlData.publicUrl, error: null };
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return { publicUrl: null, error };
+  }
+};
+
+// Delete profile picture from Supabase Storage
+export const deleteProfilePicture = async (fileUrl) => {
+  try {
+    const fileName = fileUrl.split('/').pop();
+    const { error } = await supabase.storage
+      .from('profile-pictures')
+      .remove([fileName]);
+
+    return { error };
+  } catch (error) {
+    return { error };
+  }
 };

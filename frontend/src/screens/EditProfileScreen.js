@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard, Platform, Modal, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard, Platform, Modal, FlatList, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
+import { uploadProfilePicture, deleteProfilePicture } from '../services/supabase';
 
 const activityOptions = [
   { label: 'Sedentario', value: 'Sedentario' },
@@ -93,6 +95,9 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showGoalsModal, setShowGoalsModal] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState('');
+  const [oldProfilePictureUrl, setOldProfilePictureUrl] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -115,6 +120,8 @@ export default function ProfileScreen() {
             setAge(profile.age ? profile.age.toString() : '');
             setActivityLevel(profile.activity_level || '');
             setGoals(profile.goals || '');
+            setProfilePictureUrl(profile.profile_picture_url || '');
+            setOldProfilePictureUrl(profile.profile_picture_url || '');
           } else {
             setName(user.name || '');
           }
@@ -124,6 +131,78 @@ export default function ProfileScreen() {
         setName(user.name || '');
       }
     }
+  };
+
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      Alert.alert('Permiso requerido', 'Necesitas permitir acceso a la galeria');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setUploadingImage(true);
+      try {
+        // Si habia una foto antigua, eliminarla
+        if (oldProfilePictureUrl) {
+          await deleteProfilePicture(oldProfilePictureUrl);
+        }
+
+        // Subir la nueva foto
+        const { publicUrl, error } = await uploadProfilePicture(user.email, result.assets[0].uri);
+
+        if (error) {
+          console.error('Error detallado al subir:', error);
+          Alert.alert('Error', `No se pudo subir la imagen: ${error.message || JSON.stringify(error)}`);
+        } else {
+          setProfilePictureUrl(publicUrl);
+          Alert.alert('Exito', 'Foto de perfil actualizada');
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        Alert.alert('Error', `Ocurrio un error: ${error.message || error.toString()}`);
+      } finally {
+        setUploadingImage(false);
+      }
+    }
+  };
+
+  const removeProfilePicture = async () => {
+    Alert.alert(
+      'Eliminar foto',
+      '¿Estas seguro de eliminar tu foto de perfil?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            setUploadingImage(true);
+            try {
+              if (profilePictureUrl) {
+                await deleteProfilePicture(profilePictureUrl);
+              }
+              setProfilePictureUrl('');
+              setOldProfilePictureUrl('');
+              Alert.alert('Exito', 'Foto de perfil eliminada');
+            } catch (error) {
+              console.error('Error removing image:', error);
+              Alert.alert('Error', 'No se pudo eliminar la imagen');
+            } finally {
+              setUploadingImage(false);
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleSaveProfile = async () => {
@@ -146,7 +225,8 @@ export default function ProfileScreen() {
         height: parseInt(height),
         age: parseInt(age),
         activity_level: activityLevel,
-        goals
+        goals,
+        profile_picture_url: profilePictureUrl
       };
 
       const response = await fetch('https://3f8q0vhfcf.execute-api.us-east-1.amazonaws.com/dev/profile', {
@@ -159,6 +239,7 @@ export default function ProfileScreen() {
 
       if (response.ok) {
         Alert.alert('Exito', 'Perfil guardado exitosamente');
+        setOldProfilePictureUrl(profilePictureUrl);
       } else {
         console.error('Error saving profile:', response.status);
         Alert.alert('Error', 'Error al guardar el perfil');
@@ -172,10 +253,62 @@ export default function ProfileScreen() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-      <Text style={styles.title}>Modificar Perfil</Text>
-      <Text style={styles.subtitle}>Actualiza tu informacion personal</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.innerContainer}>
+            <Text style={styles.title}>Modificar Perfil</Text>
+            <Text style={styles.subtitle}>Actualiza tu informacion personal</Text>
+
+      {/* Profile Picture Section */}
+      <View style={styles.profilePictureSection}>
+        {profilePictureUrl ? (
+          <Image
+            source={{ uri: profilePictureUrl }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <View style={styles.placeholderImage}>
+            <Text style={styles.placeholderText}>
+              {name ? name.charAt(0).toUpperCase() : '?'}
+            </Text>
+          </View>
+        )}
+
+        <View style={styles.imageButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.imageButton, uploadingImage && styles.disabledButton]}
+            onPress={pickImage}
+            disabled={uploadingImage}
+          >
+            {uploadingImage ? (
+              <ActivityIndicator color={COLORS.primary} size="small" />
+            ) : (
+              <Text style={styles.imageButtonText}>
+                {profilePictureUrl ? 'Cambiar foto' : 'Subir foto'}
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          {profilePictureUrl && (
+            <TouchableOpacity
+              style={[styles.removeButton, uploadingImage && styles.disabledButton]}
+              onPress={removeProfilePicture}
+              disabled={uploadingImage}
+            >
+              <Text style={styles.removeButtonText}>Eliminar</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Nombre Completo</Text>
@@ -296,8 +429,10 @@ export default function ProfileScreen() {
           <Text style={styles.saveButtonText}>Guardar Perfil</Text>
         )}
       </TouchableOpacity>
-      </View>
-    </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -305,8 +440,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.primary,
-    justifyContent: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 20,
+    paddingVertical: 20,
+  },
+  innerContainer: {
+    flex: 1,
   },
   title: {
     fontSize: 32,
@@ -438,5 +579,61 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontSize: 16,
     fontWeight: '500',
+  },
+  profilePictureSection: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: COLORS.secondary,
+    marginBottom: 15,
+  },
+  placeholderImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: COLORS.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  placeholderText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+  },
+  imageButtonsContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  imageButton: {
+    backgroundColor: COLORS.secondary,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    minWidth: 120,
+    alignItems: 'center',
+  },
+  imageButtonText: {
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  removeButton: {
+    backgroundColor: COLORS.error || '#FF6B6B',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

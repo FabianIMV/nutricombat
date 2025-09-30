@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, Image } from 'react-native';
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,7 +10,8 @@ export default function ProfileScreen({ navigation }) {
     height: '',
     age: '',
     activity_level: '',
-    goals: ''
+    goals: '',
+    profile_picture_url: ''
   });
   const [refreshing, setRefreshing] = useState(false);
   const { user, logout } = useAuth();
@@ -47,7 +48,8 @@ export default function ProfileScreen({ navigation }) {
               height: profile.height || '',
               age: profile.age || '',
               activity_level: profile.activity_level || '',
-              goals: profile.goals || ''
+              goals: profile.goals || '',
+              profile_picture_url: profile.profile_picture_url || ''
             });
           } else {
             setProfileData(prev => ({
@@ -97,11 +99,18 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.cardTitle}>Perfil General</Text>
         <View style={styles.profileCard}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {profileData.name.charAt(0).toUpperCase()}
-              </Text>
-            </View>
+            {profileData.profile_picture_url ? (
+              <Image
+                source={{ uri: profileData.profile_picture_url }}
+                style={styles.avatarImage}
+              />
+            ) : (
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                  {profileData.name.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+            )}
             <Text style={styles.userName}>{profileData.name}</Text>
           </View>
 
@@ -206,6 +215,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
+  },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
   },
   avatarText: {
     fontSize: 32,
