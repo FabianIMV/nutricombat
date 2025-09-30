@@ -87,8 +87,7 @@ export default function DashboardScreen({ navigation }) {
           <Text style={styles.metricTitle}>Hidratacion</Text>
           <Text style={styles.metricValue}>1.8L</Text>
           <View style={styles.metricStatus}>
-            <Text style={styles.metricIconWarning}>!</Text>
-            <Text style={styles.metricLimit}>/2L limite</Text>
+            <Text style={styles.metricNote}>registrada</Text>
           </View>
         </View>
       </View>
@@ -359,6 +358,10 @@ const styles = StyleSheet.create({
     color: '#FF9800',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  metricNote: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
   },
   alertCard: {
     backgroundColor: '#FF6B6B',

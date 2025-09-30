@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 import NutritionResultsScreen from './src/screens/NutritionResultsScreen';
 import EditProfileScreen from './src/screens/EditProfileScreen';
@@ -39,6 +40,11 @@ export default function App() {
           name="Register"
           component={RegisterScreen}
           options={{ title: 'Crear Cuenta' }}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPasswordScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Main"

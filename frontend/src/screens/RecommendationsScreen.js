@@ -8,11 +8,11 @@ export default function RecommendationsScreen({ navigation }) {
     {
       id: 1,
       category: 'Hidratacion',
-      priority: 'high',
+      priority: 'low',
       icon: 'water',
       iconColor: '#2196F3',
-      title: 'Aumenta tu hidratacion',
-      description: 'Te faltan 1.2L para alcanzar tu meta diaria de 3L',
+      title: 'Registra tu hidratacion',
+      description: 'Recuerda mantenerte hidratado durante el dia. Registra tu consumo de agua',
       action: 'Registrar agua',
     },
     {
@@ -22,7 +22,7 @@ export default function RecommendationsScreen({ navigation }) {
       icon: 'nutrition',
       iconColor: '#4CAF50',
       title: 'Consume mas proteinas',
-      description: 'Te faltan 45g de proteina para cumplir tu objetivo de 150g',
+      description: 'Las proteinas son esenciales para la recuperacion muscular',
       action: 'Ver recetas',
     },
     {
@@ -90,7 +90,7 @@ export default function RecommendationsScreen({ navigation }) {
         <View style={styles.priorityGrid}>
           <View style={styles.priorityItem}>
             <View style={[styles.priorityBadge, { backgroundColor: '#FF6B6B' }]}>
-              <Text style={styles.priorityCount}>2</Text>
+              <Text style={styles.priorityCount}>1</Text>
             </View>
             <Text style={styles.priorityLabel}>Alta</Text>
           </View>
@@ -102,7 +102,7 @@ export default function RecommendationsScreen({ navigation }) {
           </View>
           <View style={styles.priorityItem}>
             <View style={[styles.priorityBadge, { backgroundColor: '#4CAF50' }]}>
-              <Text style={styles.priorityCount}>1</Text>
+              <Text style={styles.priorityCount}>2</Text>
             </View>
             <Text style={styles.priorityLabel}>Baja</Text>
           </View>
