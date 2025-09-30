@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../styles/colors';
 
 import WeightCutCalculatorScreen from '../screens/WeightCutCalculatorScreen';
-import DashboardScreen from '../screens/DashboardScreen';
+import DashboardStackNavigator from './DashboardStackNavigator';
 import ScannerScreen from '../screens/ScannerScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -51,7 +51,7 @@ export default function TabNavigator() {
       />
       <Tab.Screen
         name="Dashboard"
-        component={DashboardScreen}
+        component={DashboardStackNavigator}
         options={{ title: 'Dashboard' }}
       />
       <Tab.Screen

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, RefreshControl, ActivityIndicator } from 'react-native';
 import { COLORS } from '../styles/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
-export default function DashboardScreen() {
+export default function DashboardScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
@@ -101,27 +102,89 @@ export default function DashboardScreen() {
         <Text style={styles.alertText}>Reduce sodio desde HOY. Maximo 300mg/dia</Text>
       </View>
 
+      {/* Navigation Cards */}
+      <View style={styles.navigationSection}>
+        <Text style={styles.sectionTitle}>Acceso Rapido</Text>
+
+        <TouchableOpacity
+          style={styles.navCard}
+          onPress={() => navigation.navigate('NutritionTracking')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.navCardContent}>
+            <View style={[styles.navIcon, { backgroundColor: '#4CAF50' }]}>
+              <Ionicons name="restaurant" size={28} color="white" />
+            </View>
+            <View style={styles.navTextContainer}>
+              <Text style={styles.navTitle}>Seguimiento Nutricional</Text>
+              <Text style={styles.navDescription}>Registra tus comidas y macros</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={COLORS.secondary} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navCard}
+          onPress={() => navigation.navigate('Recommendations')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.navCardContent}>
+            <View style={[styles.navIcon, { backgroundColor: '#2196F3' }]}>
+              <Ionicons name="bulb" size={28} color="white" />
+            </View>
+            <View style={styles.navTextContainer}>
+              <Text style={styles.navTitle}>Recomendaciones</Text>
+              <Text style={styles.navDescription}>Consejos personalizados para ti</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={COLORS.secondary} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navCard}
+          onPress={() => navigation.navigate('Stats')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.navCardContent}>
+            <View style={[styles.navIcon, { backgroundColor: '#9C27B0' }]}>
+              <Ionicons name="stats-chart" size={28} color="white" />
+            </View>
+            <View style={styles.navTextContainer}>
+              <Text style={styles.navTitle}>Estadisticas</Text>
+              <Text style={styles.navDescription}>Visualiza tu progreso</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={COLORS.secondary} />
+          </View>
+        </TouchableOpacity>
+      </View>
+
       {/* Acciones Rapidas */}
       <View style={styles.actionsSection}>
         <Text style={styles.sectionTitle}>Acciones Rapidas</Text>
         <View style={styles.actionsRow}>
           <TouchableOpacity style={[styles.actionButton, styles.actionGreen]}>
+            <Ionicons name="scale" size={24} color="white" />
             <Text style={styles.actionText}>Peso</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.actionGreen]}>
+            <Ionicons name="water" size={24} color="white" />
             <Text style={styles.actionText}>+250ml</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.actionGreen]}>
+            <Ionicons name="restaurant" size={24} color="white" />
             <Text style={styles.actionText}>Comida</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.actionRed]}>
+            <Ionicons name="alert-circle" size={24} color="white" />
             <Text style={styles.actionText}>Urgencia</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      <View style={styles.bottomSpacing} />
     </ScrollView>
   );
 }
@@ -324,9 +387,45 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
   },
+  navigationSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  navCard: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 20,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  navCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+  },
+  navIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  navTextContainer: {
+    flex: 1,
+  },
+  navTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: 4,
+  },
+  navDescription: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+  },
   actionsSection: {
     paddingHorizontal: 20,
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
   actionsRow: {
     flexDirection: 'row',
@@ -338,7 +437,7 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 80,
+    minHeight: 85,
   },
   actionGreen: {
     backgroundColor: COLORS.secondary,
@@ -350,8 +449,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     fontWeight: '600',
-    marginTop: 5,
+    marginTop: 8,
     textAlign: 'center',
+  },
+  bottomSpacing: {
+    height: 30,
   },
   loadingHeader: {
     flexDirection: 'row',
