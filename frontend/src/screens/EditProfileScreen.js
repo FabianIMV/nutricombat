@@ -1,110 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard, Platform, Modal, FlatList, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard, Platform, Image, ScrollView, KeyboardAvoidingView, BackHandler } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 import { uploadProfilePicture, deleteProfilePicture } from '../services/supabase';
 
-const activityOptions = [
-  { label: 'Sedentario', value: 'Sedentario' },
-  { label: 'Moderado', value: 'Moderado' },
-  { label: 'Activo', value: 'Activo' },
-  { label: 'Muy Activo', value: 'Muy Activo' }
-];
-
-const goalsOptions = [
-  { label: 'Perdida de peso', value: 'Perdida de peso' },
-  { label: 'Ganancia muscular', value: 'Ganancia muscular' },
-  { label: 'Mantener peso', value: 'Mantener peso' },
-  { label: 'Corte de peso', value: 'Corte de peso' },
-  { label: 'Rendimiento', value: 'Rendimiento' }
-];
-
-const IOSSelector = ({ options, selectedValue, onSelect, placeholder, modalVisible, setModalVisible }) => {
-  const selectedOption = options.find(opt => opt.value === selectedValue);
-
-  return (
-    <>
-      <TouchableOpacity
-        style={styles.iosSelectorButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.iosSelectorText}>
-          {selectedOption ? selectedOption.label : placeholder}
-        </Text>
-        <Text style={styles.iosSelectorArrow}>v</Text>
-      </TouchableOpacity>
-
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Seleccionar opcion</Text>
-            <FlatList
-              data={options}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.optionItem,
-                    item.value === selectedValue && styles.selectedOption
-                  ]}
-                  onPress={() => {
-                    onSelect(item.value);
-                    setModalVisible(false);
-                  }}
-                >
-                  <Text style={[
-                    styles.optionText,
-                    item.value === selectedValue && styles.selectedOptionText
-                  ]}>
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </>
-  );
-};
-
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation, route }) {
   const [name, setName] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [age, setAge] = useState('');
-  const [activityLevel, setActivityLevel] = useState('');
-  const [goals, setGoals] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showActivityModal, setShowActivityModal] = useState(false);
-  const [showGoalsModal, setShowGoalsModal] = useState(false);
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
   const [oldProfilePictureUrl, setOldProfilePictureUrl] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
   const { user } = useAuth();
 
+  // Verificar si el perfil está incompleto (usuario forzado a completar perfil)
+  const isProfileIncomplete = route?.params?.isProfileIncomplete || false;
+  const preloadedProfile = route?.params?.preloadedProfile || null;
+
   useEffect(() => {
-    if (user) {
+    // Si hay datos precargados, usarlos directamente
+    if (preloadedProfile) {
+      setName(preloadedProfile.name || '');
+      setWeight(preloadedProfile.weight ? preloadedProfile.weight.toString() : '');
+      setHeight(preloadedProfile.height ? preloadedProfile.height.toString() : '');
+      setAge(preloadedProfile.age ? preloadedProfile.age.toString() : '');
+      setProfilePictureUrl(preloadedProfile.profile_picture_url || '');
+      setOldProfilePictureUrl(preloadedProfile.profile_picture_url || '');
+    } else if (user) {
+      // Si no hay datos precargados, cargarlos
       loadUserProfile();
     }
-  }, [user]);
+  }, [user, preloadedProfile]);
+
+  // Bloquear el botón de retroceso si el perfil está incompleto
+  useEffect(() => {
+    if (isProfileIncomplete) {
+      // Bloquear el botón de retroceso en Android
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+        Alert.alert(
+          'Completa tu perfil',
+          'Debes completar tu perfil antes de continuar',
+          [{ text: 'Entendido' }]
+        );
+        return true; // Prevenir el comportamiento por defecto
+      });
+
+      // Bloquear el gesto de deslizar hacia atrás y el botón de navegación en iOS
+      if (navigation) {
+        navigation.setOptions({
+          headerLeft: () => null, // Eliminar el botón de retroceso
+          gestureEnabled: false, // Desactivar el gesto de deslizar hacia atrás
+        });
+      }
+
+      return () => {
+        backHandler.remove();
+        // Restaurar opciones de navegación si el componente se desmonta
+        if (navigation) {
+          navigation.setOptions({
+            headerLeft: undefined,
+            gestureEnabled: true,
+          });
+        }
+      };
+    }
+  }, [isProfileIncomplete, navigation]);
 
   const loadUserProfile = async () => {
     if (user && user.email) {
@@ -118,8 +81,6 @@ export default function ProfileScreen() {
             setWeight(profile.weight ? profile.weight.toString() : '');
             setHeight(profile.height ? profile.height.toString() : '');
             setAge(profile.age ? profile.age.toString() : '');
-            setActivityLevel(profile.activity_level || '');
-            setGoals(profile.goals || '');
             setProfilePictureUrl(profile.profile_picture_url || '');
             setOldProfilePictureUrl(profile.profile_picture_url || '');
           } else {
@@ -205,6 +166,42 @@ export default function ProfileScreen() {
     );
   };
 
+  const validateWeight = (value) => {
+    // Permitir solo números y un punto decimal
+    const sanitized = value.replace(/[^0-9.]/g, '');
+    // Evitar múltiples puntos decimales
+    const parts = sanitized.split('.');
+    if (parts.length > 2) {
+      return parts[0] + '.' + parts.slice(1).join('');
+    }
+    return sanitized;
+  };
+
+  const validateHeight = (value) => {
+    // Permitir solo números enteros
+    return value.replace(/[^0-9]/g, '');
+  };
+
+  const validateAge = (value) => {
+    // Permitir solo números enteros
+    return value.replace(/[^0-9]/g, '');
+  };
+
+  const handleWeightChange = (value) => {
+    const validated = validateWeight(value);
+    setWeight(validated);
+  };
+
+  const handleHeightChange = (value) => {
+    const validated = validateHeight(value);
+    setHeight(validated);
+  };
+
+  const handleAgeChange = (value) => {
+    const validated = validateAge(value);
+    setAge(validated);
+  };
+
   const handleSaveProfile = async () => {
     if (!user) {
       Alert.alert('Error', 'No hay usuario logueado');
@@ -216,16 +213,34 @@ export default function ProfileScreen() {
       return;
     }
 
+    // Validaciones específicas
+    const weightNum = parseFloat(weight);
+    const heightNum = parseInt(height);
+    const ageNum = parseInt(age);
+
+    if (weightNum <= 0 || weightNum > 300) {
+      Alert.alert('Error', 'El peso debe estar entre 1 y 300 kg');
+      return;
+    }
+
+    if (heightNum <= 0 || heightNum > 250) {
+      Alert.alert('Error', 'La altura debe estar entre 1 y 250 cm');
+      return;
+    }
+
+    if (ageNum <= 0 || ageNum > 120) {
+      Alert.alert('Error', 'La edad debe estar entre 1 y 120 años');
+      return;
+    }
+
     setLoading(true);
     try {
       const profileData = {
         email: user.email,
         name,
-        weight: parseFloat(weight),
-        height: parseInt(height),
-        age: parseInt(age),
-        activity_level: activityLevel,
-        goals,
+        weight: weightNum,
+        height: heightNum,
+        age: ageNum,
         profile_picture_url: profilePictureUrl
       };
 
@@ -240,6 +255,16 @@ export default function ProfileScreen() {
       if (response.ok) {
         Alert.alert('Exito', 'Perfil guardado exitosamente');
         setOldProfilePictureUrl(profilePictureUrl);
+
+        // Si el perfil estaba incompleto, navegar al Main
+        if (isProfileIncomplete && navigation) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Main' }],
+          });
+        } else if (navigation) {
+          navigation.goBack();
+        }
       } else {
         console.error('Error saving profile:', response.status);
         Alert.alert('Error', 'Error al guardar el perfil');
@@ -265,8 +290,22 @@ export default function ProfileScreen() {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.innerContainer}>
-            <Text style={styles.title}>Modificar Perfil</Text>
-            <Text style={styles.subtitle}>Actualiza tu informacion personal</Text>
+            <Text style={styles.title}>
+              {isProfileIncomplete ? 'Completa tu Perfil' : 'Modificar Perfil'}
+            </Text>
+            <Text style={styles.subtitle}>
+              {isProfileIncomplete
+                ? 'Completa tu informacion para continuar'
+                : 'Actualiza tu informacion personal'}
+            </Text>
+
+            {isProfileIncomplete && (
+              <View style={styles.warningBanner}>
+                <Text style={styles.warningText}>
+                  ⚠️ Debes completar todos los campos para continuar
+                </Text>
+              </View>
+            )}
 
       {/* Profile Picture Section */}
       <View style={styles.profilePictureSection}>
@@ -322,100 +361,45 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Peso Actual</Text>
+        <Text style={styles.inputLabel}>Peso Actual (kg)</Text>
         <TextInput
           style={styles.input}
-          placeholder="Peso en kilogramos"
+          placeholder="Ej: 70.5"
           placeholderTextColor={COLORS.textSecondary}
           value={weight}
-          onChangeText={setWeight}
-          keyboardType="numeric"
+          onChangeText={handleWeightChange}
+          keyboardType="decimal-pad"
+          maxLength={5}
         />
+        <Text style={styles.helperText}>Rango válido: 1 - 300 kg</Text>
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Altura</Text>
+        <Text style={styles.inputLabel}>Altura (cm)</Text>
         <TextInput
           style={styles.input}
-          placeholder="Altura en centimetros"
+          placeholder="Ej: 175"
           placeholderTextColor={COLORS.textSecondary}
           value={height}
-          onChangeText={setHeight}
-          keyboardType="numeric"
+          onChangeText={handleHeightChange}
+          keyboardType="number-pad"
+          maxLength={3}
         />
+        <Text style={styles.helperText}>Rango válido: 1 - 250 cm</Text>
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Edad</Text>
+        <Text style={styles.inputLabel}>Edad (años)</Text>
         <TextInput
           style={styles.input}
-          placeholder="Tu edad actual"
+          placeholder="Ej: 25"
           placeholderTextColor={COLORS.textSecondary}
           value={age}
-          onChangeText={setAge}
-          keyboardType="numeric"
+          onChangeText={handleAgeChange}
+          keyboardType="number-pad"
+          maxLength={3}
         />
-      </View>
-
-      {/* Activity Level Selector */}
-      <View style={styles.selectorContainer}>
-        <Text style={styles.selectorLabel}>Nivel de Actividad</Text>
-        {Platform.OS === 'ios' ? (
-          <IOSSelector
-            options={activityOptions}
-            selectedValue={activityLevel}
-            onSelect={setActivityLevel}
-            placeholder="Seleccionar nivel de actividad"
-            modalVisible={showActivityModal}
-            setModalVisible={setShowActivityModal}
-          />
-        ) : (
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={activityLevel}
-              style={styles.picker}
-              onValueChange={setActivityLevel}
-              dropdownIconColor={COLORS.secondary}
-            >
-              <Picker.Item label="Seleccionar nivel" value="" />
-              <Picker.Item label="Sedentario" value="Sedentario" />
-              <Picker.Item label="Moderado" value="Moderado" />
-              <Picker.Item label="Activo" value="Activo" />
-              <Picker.Item label="Muy Activo" value="Muy Activo" />
-            </Picker>
-          </View>
-        )}
-      </View>
-
-      {/* Goals Selector */}
-      <View style={styles.selectorContainer}>
-        <Text style={styles.selectorLabel}>Objetivos</Text>
-        {Platform.OS === 'ios' ? (
-          <IOSSelector
-            options={goalsOptions}
-            selectedValue={goals}
-            onSelect={setGoals}
-            placeholder="Seleccionar objetivo"
-            modalVisible={showGoalsModal}
-            setModalVisible={setShowGoalsModal}
-          />
-        ) : (
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={goals}
-              style={styles.picker}
-              onValueChange={setGoals}
-              dropdownIconColor={COLORS.secondary}
-            >
-              <Picker.Item label="Seleccionar objetivo" value="" />
-              <Picker.Item label="Perdida de peso" value="Perdida de peso" />
-              <Picker.Item label="Ganancia muscular" value="Ganancia muscular" />
-              <Picker.Item label="Mantener peso" value="Mantener peso" />
-              <Picker.Item label="Corte de peso" value="Corte de peso" />
-              <Picker.Item label="Rendimiento" value="Rendimiento" />
-            </Picker>
-          </View>
-        )}
+        <Text style={styles.helperText}>Rango válido: 1 - 120 años</Text>
       </View>
 
       <TouchableOpacity
@@ -494,91 +478,26 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginBottom: 8,
   },
-  selectorContainer: {
-    marginBottom: 15,
-  },
-  selectorLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: COLORS.text,
-    marginBottom: 8,
-  },
-  pickerContainer: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 8,
-  },
-  picker: {
-    color: COLORS.text,
-    height: 50,
-  },
-  iosSelectorButton: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 8,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  iosSelectorText: {
-    color: COLORS.text,
-    fontSize: 16,
-    flex: 1,
-  },
-  iosSelectorArrow: {
-    color: COLORS.secondary,
+  helperText: {
     fontSize: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 15,
-    padding: 20,
-    width: '100%',
-    maxWidth: 300,
-    maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.text,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  optionItem: {
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 5,
-    backgroundColor: COLORS.primary,
-  },
-  selectedOption: {
-    backgroundColor: COLORS.secondary,
-  },
-  optionText: {
-    fontSize: 16,
-    color: COLORS.text,
-    textAlign: 'center',
-  },
-  selectedOptionText: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    marginTop: 15,
-    padding: 15,
-    backgroundColor: COLORS.primary,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
     color: COLORS.textSecondary,
-    fontSize: 16,
-    fontWeight: '500',
+    marginTop: -10,
+    marginBottom: 10,
+    paddingLeft: 5,
+  },
+  warningBanner: {
+    backgroundColor: '#FFA50080',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#FFA500',
+  },
+  warningText: {
+    color: COLORS.text,
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   profilePictureSection: {
     alignItems: 'center',

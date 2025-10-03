@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,32 +8,17 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
-  Animated,
   RefreshControl
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { readAsStringAsync } from 'expo-file-system/legacy';
 import { COLORS } from '../styles/colors';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ScannerScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [spinValue] = useState(new Animated.Value(0));
-
-  useEffect(() => {
-    if (isLoading) {
-      Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        })
-      ).start();
-    } else {
-      spinValue.setValue(0);
-    }
-  }, [isLoading]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -42,11 +27,6 @@ export default function ScannerScreen({ navigation }) {
       setRefreshing(false);
     }, 1000);
   };
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
 
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -237,11 +217,13 @@ export default function ScannerScreen({ navigation }) {
 
 
         {isLoading && (
-          <View style={styles.loadingContainer}>
-            <Animated.View style={[styles.loader, { transform: [{ rotate: spin }] }]}>
-              <ActivityIndicator size="large" color={COLORS.secondary} />
-            </Animated.View>
-            <Text style={styles.loadingText}>Analizando alimento...</Text>
+          <View style={styles.fullScreenLoading}>
+            <LoadingSpinner
+              useDynamicMessages={true}
+              subtitle="Analizando composición nutricional"
+              messageInterval={2000}
+              showTitle={false}
+            />
           </View>
         )}
 
@@ -258,6 +240,15 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     alignItems: 'center',
+  },
+  fullScreenLoading: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: COLORS.primary,
+    zIndex: 1000,
   },
   title: {
     fontSize: 24,

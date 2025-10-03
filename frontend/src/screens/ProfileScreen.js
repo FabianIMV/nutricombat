@@ -3,17 +3,16 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, A
 import { COLORS } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation, route }) {
   const [profileData, setProfileData] = useState({
     name: '',
     weight: '',
     height: '',
     age: '',
-    activity_level: '',
-    goals: '',
     profile_picture_url: ''
   });
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -25,37 +24,59 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleEditProfile = () => {
-    navigation.navigate('EditProfile');
+    navigation.navigate('EditProfile', { preloadedProfile: profileData });
   };
 
   useEffect(() => {
-    if (user) {
+    // Si hay datos precargados desde la navegación, usarlos
+    const preloadedProfile = route?.params?.preloadedProfile;
+
+    if (preloadedProfile) {
+      setProfileData({
+        name: preloadedProfile.name || user?.name || 'Usuario',
+        weight: preloadedProfile.weight || '',
+        height: preloadedProfile.height || '',
+        age: preloadedProfile.age || '',
+        profile_picture_url: preloadedProfile.profile_picture_url || ''
+      });
+      setIsLoading(false);
+    } else if (user) {
       loadUserProfile();
     }
-  }, [user]);
+  }, [user, route?.params?.preloadedProfile]);
 
   const loadUserProfile = async () => {
     if (user && user.email) {
+      setIsLoading(true);
       try {
         const response = await fetch('https://3f8q0vhfcf.execute-api.us-east-1.amazonaws.com/dev/profile?email=' + user.email);
         if (response.ok) {
           const data = await response.json();
           if (data.data && data.data.length > 0) {
             const profile = data.data[0];
+
+            // Verificar si el perfil está incompleto
+            const isIncomplete = !profile.weight || !profile.height || !profile.age || !profile.name;
+
+            if (isIncomplete) {
+              // Redirigir a EditProfile con parámetro de perfil incompleto
+              navigation.navigate('EditProfile', {
+                isProfileIncomplete: true,
+                preloadedProfile: profile
+              });
+              return;
+            }
+
             setProfileData({
               name: profile.name || user.name || 'Usuario',
               weight: profile.weight || '',
               height: profile.height || '',
               age: profile.age || '',
-              activity_level: profile.activity_level || '',
-              goals: profile.goals || '',
               profile_picture_url: profile.profile_picture_url || ''
             });
           } else {
-            setProfileData(prev => ({
-              ...prev,
-              name: user.name || 'Usuario'
-            }));
+            // No hay perfil, redirigir a completar
+            navigation.navigate('EditProfile', { isProfileIncomplete: true });
           }
         }
       } catch (error) {
@@ -64,6 +85,8 @@ export default function ProfileScreen({ navigation }) {
           ...prev,
           name: user.name || 'Usuario'
         }));
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -73,6 +96,16 @@ export default function ProfileScreen({ navigation }) {
     await loadUserProfile();
     setRefreshing(false);
   };
+
+  // Mostrar loader mientras carga por primera vez
+  if (isLoading && !profileData.name) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.secondary} />
+        <Text style={styles.loadingText}>Cargando perfil...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -135,20 +168,6 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Peso:</Text>
               <Text style={styles.infoValue}>{profileData.weight ? `${profileData.weight} kg` : 'No especificado'}</Text>
-            </View>
-          </View>
-
-          <Text style={styles.cardTitle}>Salud y Fitness</Text>
-          <View style={styles.infoSection}>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Nivel de Actividad:</Text>
-              <Text style={styles.infoValue}>{profileData.activity_level || 'No especificado'}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Objetivos:</Text>
-              <Text style={styles.infoValue}>{profileData.goals || 'No especificado'}</Text>
             </View>
           </View>
 
@@ -349,5 +368,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 15,
     paddingHorizontal: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -13,6 +13,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -23,9 +24,16 @@ export const AuthProvider = ({ children }) => {
     try {
       const userData = await AsyncStorage.getItem('@nutricombat_user');
       const tokenData = await AsyncStorage.getItem('@nutricombat_token');
+      const userIdData = await AsyncStorage.getItem('@nutricombat_user_id');
 
       if (userData && tokenData) {
         setUser(JSON.parse(userData));
+        if (userIdData) {
+          setUserId(userIdData);
+          console.log('✅ User ID cargado desde storage:', userIdData);
+        } else {
+          console.log('ℹ️ No hay user_id almacenado previamente');
+        }
       }
     } catch (error) {
       console.error('Error cargando usuario:', error);
@@ -44,11 +52,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const setUserIdInSession = async (id) => {
+    try {
+      await AsyncStorage.setItem('@nutricombat_user_id', id);
+      setUserId(id);
+      console.log('✅ AuthContext - User ID guardado:', id);
+      console.log('📦 Estado actualizado - userId:', id);
+    } catch (error) {
+      console.error('❌ Error guardando user_id:', error);
+    }
+  };
+
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('@nutricombat_user');
       await AsyncStorage.removeItem('@nutricombat_token');
+      await AsyncStorage.removeItem('@nutricombat_user_id');
       setUser(null);
+      setUserId(null);
     } catch (error) {
       console.error('Error eliminando usuario:', error);
     }
@@ -66,10 +87,12 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    userId,
     isLoading,
     login,
     logout,
     getToken,
+    setUserIdInSession,
     isAuthenticated: !!user
   };
 

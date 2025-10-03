@@ -62,9 +62,8 @@ export default function LoginScreen({ navigation }) {
           await AsyncStorage.removeItem('userCredentials');
         }
 
-        Alert.alert('Éxito', 'Inicio de sesión exitoso', [
-          { text: 'OK', onPress: () => navigation.navigate('Main') }
-        ]);
+        // Navegar a la pantalla de carga de perfil
+        navigation.replace('ProfileLoading');
       }
     } catch (error) {
       Alert.alert('Error', 'Ocurrió un error inesperado');

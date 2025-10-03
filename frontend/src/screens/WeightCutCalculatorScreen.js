@@ -7,14 +7,13 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  ActivityIndicator,
-  Animated,
   Platform,
   Modal,
   FlatList
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { COLORS } from '../styles/colors';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function WeightCutCalculatorScreen({ navigation }) {
   const [formData, setFormData] = useState({
@@ -31,29 +30,9 @@ export default function WeightCutCalculatorScreen({ navigation }) {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [spinValue] = useState(new Animated.Value(0));
   const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [showSportModal, setShowSportModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
-
-  useEffect(() => {
-    if (isLoading) {
-      Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        })
-      ).start();
-    } else {
-      spinValue.setValue(0);
-    }
-  }, [isLoading]);
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
 
   const validateForm = () => {
     const newErrors = {};
@@ -248,13 +227,11 @@ export default function WeightCutCalculatorScreen({ navigation }) {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Animated.View style={[styles.loader, { transform: [{ rotate: spin }] }]}>
-          <ActivityIndicator size="large" color={COLORS.secondary} />
-        </Animated.View>
-        <Text style={styles.loadingText}>Analizando datos con IA...</Text>
-        <Text style={styles.loadingSubtext}>Generando plan personalizado de corte de peso</Text>
-      </View>
+      <LoadingSpinner
+        useDynamicMessages={true}
+        subtitle="Generando plan personalizado de corte de peso"
+        messageInterval={2500}
+      />
     );
   }
 
